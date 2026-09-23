@@ -1372,21 +1372,48 @@ class SecureLedgerApp {
     const isHighSecurity = this.paymentAmount >= 10000 || this.paymentReceiver === 'Unknown Account' || this.paymentReceiver === 'High-Risk Account';
 
     const executeScreening = () => {
-      runFraudScreening(this.paymentAmount, this.paymentReceiver, (riskLevel, riskScore) => {
+      runFraudScreening(this.paymentAmount, this.paymentReceiver, async (riskLevel, riskScore) => {
+        // Asynchronously register transaction with backend / local store
+        const desc = document.getElementById('pay-desc')?.value || '';
+        const paymentResult = await API.sendPayment({
+          receiverName: this.paymentReceiver,
+          amount: this.paymentAmount,
+          description: desc
+        });
+
+        if (paymentResult && paymentResult.transaction) {
+          if (!APP_DATA.transactions.some(t => t.id === paymentResult.transaction.id)) {
+            APP_DATA.transactions.unshift(paymentResult.transaction);
+          }
+        }
+
         if (riskLevel === 'high') {
           // Navigate to fraud alert
           document.getElementById('payment-review').style.display = 'none';
           this.showFraudAlert(riskScore);
+          if (typeof this.renderAlerts === 'function') this.renderAlerts();
         } else {
-          // Success
+          // Deduct local balance and update UI
+          APP_DATA.currentUser.balance = Math.max(0, APP_DATA.currentUser.balance - this.paymentAmount);
+          const balFormatted = '₹' + APP_DATA.currentUser.balance.toLocaleString('en-IN');
+          const statBal = document.getElementById('stat-available-balance');
+          if (statBal) statBal.textContent = balFormatted;
+          const payBal = document.getElementById('pay-available-balance');
+          if (payBal) payBal.textContent = balFormatted;
+
+          // Success UI
           document.getElementById('payment-review').style.display = 'none';
           document.getElementById('payment-success').style.display = 'block';
           document.getElementById('success-amount').textContent = '₹' + this.paymentAmount.toLocaleString('en-IN');
           document.getElementById('success-to').textContent = this.paymentReceiver;
-          document.getElementById('success-txnid').textContent = 'TXN' + Date.now().toString().slice(-6);
+          document.getElementById('success-txnid').textContent = (paymentResult && paymentResult.transaction && paymentResult.transaction.id) || ('TXN' + Date.now().toString().slice(-6));
           document.getElementById('success-risk').textContent = riskScore + '/100 — ' + riskLevel.toUpperCase() + ' RISK';
           document.getElementById('success-risk').style.color =
             riskLevel === 'medium' ? 'var(--warning)' : 'var(--success)';
+        }
+
+        if (typeof this.renderTransactionTable === 'function') {
+          this.renderTransactionTable();
         }
       });
     };
@@ -1775,17 +1802,32 @@ class SecureLedgerApp {
   }
 
   // ── INVESTIGATION ACTIONS ─────────────────────
-  markNormal() {
+  async markNormal() {
+    if (this.selectedAlert) {
+      await API.updateAlert(this.selectedAlert.id, 'normal');
+      this.selectedAlert.status = 'False Positive';
+    }
+    if (typeof this.renderAlerts === 'function') this.renderAlerts();
     this.showToast('✓ Transaction marked as normal.', 'success');
     setTimeout(() => this.navigateTo('alerts'), 1000);
   }
 
-  confirmFraud() {
+  async confirmFraud() {
+    if (this.selectedAlert) {
+      await API.updateAlert(this.selectedAlert.id, 'fraud');
+      this.selectedAlert.status = 'Confirmed Fraud';
+    }
+    if (typeof this.renderAlerts === 'function') this.renderAlerts();
     this.showToast('⚠ Transaction confirmed as fraud. Account flagged.', 'danger');
     setTimeout(() => this.navigateTo('alerts'), 1000);
   }
 
-  blockTransaction() {
+  async blockTransaction() {
+    if (this.selectedAlert) {
+      await API.updateAlert(this.selectedAlert.id, 'block');
+      this.selectedAlert.status = 'Blocked';
+    }
+    if (typeof this.renderAlerts === 'function') this.renderAlerts();
     this.showToast('✕ Transaction blocked. User notified.', 'warning');
     setTimeout(() => this.navigateTo('alerts'), 1000);
   }

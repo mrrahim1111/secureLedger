@@ -1,0 +1,17 @@
+{
+  "name": "secure-ledger-api",
+  "version": "2.0.0",
+  "description": "SecureLedger Core Banking Ledger & AI Fraud Screening Backend Service",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["banking", "ledger", "fraud-detection", "ai", "webauthn"],
+  "author": "Rahim",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5"
+  }
+}

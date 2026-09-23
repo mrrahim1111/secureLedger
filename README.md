@@ -59,9 +59,10 @@ The system analyzes simulated transactions based on multiple anomaly vectors (am
 
 ## 🛠️ Technology Stack
 
-- **Frontend Core:** HTML5, Vanilla JavaScript (ES6+)
-- **Styling:** Custom Vanilla CSS3 (CSS Variables, Flexbox, Grid, CSS Keyframe Animations)
-- **3D Graphics:** [Three.js r128](https://threejs.org/) (WebGL Renderer, Orbit Controls, Raycasting)
+- **Frontend Core:** HTML5, Vanilla JavaScript (ES6+), `api.js` client layer
+- **Backend Core:** Node.js, Express.js REST API (`server.js`), Double-Entry Banking Ledger (`db.js`), AI Fraud Scoring Engine (`fraud-engine.js`)
+- **Styling:** Custom Vanilla CSS3 (CSS Variables & Tokens, Monochromatic Dark & Clean Slate Light modes, Keyframe Animations)
+- **3D Graphics:** [Three.js r128](https://threejs.org/) (WebGL Renderer, Bezier Money Flows, Orbit Controls, Raycasting)
 - **Data Visualization:** [Chart.js 4.4.0](https://www.chartjs.org/)
 - **Typography:** Google Fonts (*Inter* for UI, *JetBrains Mono* for IDs and currency amounts)
 
@@ -71,37 +72,73 @@ The system analyzes simulated transactions based on multiple anomaly vectors (am
 
 ```
 secureLedger/
-├── index.html     # Single Page Application HTML structure (10 sections)
-├── styles.css     # Design tokens, Dark/Light mode styles, CSS animations
-├── app.js         # Main controller, Three.js 3D network, Chart configs, AI logic
-├── data.js        # Simulated datasets (users, transactions, alerts, monthly data)
-└── README.md      # Project documentation
+├── index.html         # Single Page Application UI structure (10 comprehensive sections)
+├── styles.css         # Monochromatic Dark & Clean Slate Light mode design tokens & HUD
+├── app.js             # Main frontend controller, Three.js 3D network, Charts, Biometrics
+├── api.js             # Client-side REST API communication bridge with local fallback
+├── data.js            # Initial demonstration datasets & baseline schemas
+├── server.js          # Express.js REST API server & static host (Port 3000)
+├── db.js              # Double-entry ledger data store with atomic balance invariants
+├── fraud-engine.js    # AI anomaly detection & graph risk scoring micro-engine
+├── package.json       # Project dependencies & startup scripts
+└── README.md          # Comprehensive project documentation
 ```
 
 ---
 
 ## 🚀 How to Run Locally
 
-Since **SecureLedger** is built as a zero-dependency client-side application using standard web APIs and CDN-hosted libraries, no `npm install` or local server build step is required!
+You can run **SecureLedger** either as a Full-Stack Node.js/Express Web Application or as a standalone zero-dependency web page:
 
+### Option 1: Full-Stack Web Application (Recommended)
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/mrrahim1111/secureLedger.git
    cd secureLedger
    ```
 
-2. **Open in Browser:**
-   - Double click [`index.html`](index.html) to open directly in Chrome, Safari, Firefox, or Edge.
-   - Or serve with any static web server:
-     ```bash
-     npx serve .
-     ```
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Start the Express API & Web Server:**
+   ```bash
+   npm start
+   ```
+
+4. **Open in Browser:**
+   Visit [`http://localhost:3000`](http://localhost:3000)
+
+---
+
+### Option 2: Standalone Static Mode
+Open [`index.html`](index.html) directly in any modern browser (Chrome, Safari, Edge, Firefox). The frontend automatically detects standalone mode and uses the client-side engine seamlessly.
+
+---
+
+## 🔌 REST API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/health` | Service health status and ledger integrity check |
+| `POST` | `/api/auth/login` | Authenticate user session with role selection |
+| `POST` | `/api/auth/biometric-verify` | Face ID / Touch ID challenge token verification |
+| `GET` | `/api/user/profile` | Retrieve active user account profile & balance |
+| `GET` | `/api/transactions` | Query transaction records with search & risk filters |
+| `POST` | `/api/transactions/screen` | Real-time AI risk pre-screening without committing |
+| `POST` | `/api/transactions/send` | Atomic double-entry payment transaction execution |
+| `GET` | `/api/alerts` | Retrieve pending & resolved fraud alerts |
+| `POST` | `/api/alerts/:id/action` | Analyst resolution (`normal`, `fraud`, `block`) |
+| `GET` | `/api/analytics` | Aggregate financial volume & risk distribution data |
+| `GET` | `/api/network` | 3D WebGL graph nodes & transaction edge vectors |
+| `GET` | `/api/ledger/journal` | Double-entry journal audit trail |
 
 ---
 
 ## 🎮 How to Demo the Prototype
 
-1. **Sign In:** Use pre-filled demo credentials on the dual-pane login screen (`rahim@securledger.dev`).
+1. **Sign In:** Use pre-filled demo credentials on the dual-pane login screen (`rahim@securledger.dev`) or click Face ID / Touch ID.
 2. **Explore 3D Dashboard:** Drag, rotate, and zoom the 3D transaction network graph. Click on nodes (e.g. *Unknown Acct*) to inspect account relationships.
 3. **Trigger AI Fraud Alert:**
    - Go to **Payments**.
@@ -116,4 +153,6 @@ Since **SecureLedger** is built as a zero-dependency client-side application usi
 
 ## 📜 License & Academic Usage
 
-This project is created for educational and college demonstration purposes. All rights reserved.
+- **Author:** Rahim
+- **Project:** SecureLedger — AI-Powered Digital Banking & Fraud Screening System
+- **Repository:** [https://github.com/mrrahim1111/secureLedger](https://github.com/mrrahim1111/secureLedger)

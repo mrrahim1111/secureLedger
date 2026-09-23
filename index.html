@@ -264,7 +264,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
             </div>
           </div>
-          <div class="stat-value">₹25,430</div>
+          <div class="stat-value" id="stat-available-balance">₹25,430</div>
           <div class="stat-sub">SLAC000001 · KYC Verified</div>
         </div>
 
@@ -502,7 +502,7 @@
                 <div class="user-avatar" style="width:44px;height:44px;font-size:16px;border-radius:12px">R</div>
                 <div class="account-info">
                   <h4>Rahim — SLAC000001</h4>
-                  <p>Available balance: <strong style="color:var(--success)">₹25,430</strong></p>
+                  <p>Available balance: <strong style="color:var(--success)" id="pay-available-balance">₹25,430</strong></p>
                 </div>
               </div>
             </div>
@@ -1427,6 +1427,7 @@
 
 <!-- Data & Scripts -->
 <script src="data.js"></script>
+<script src="api.js"></script>
 <script src="app.js"></script>
 
 <script>
