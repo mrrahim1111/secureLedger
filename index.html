@@ -446,39 +446,39 @@
               </tr>
             </thead>
             <tbody>
+              <tr onclick="app.openTransaction('TXN1001')">
+                <td class="mono" style="color:var(--accent)">TXN1001</td>
+                <td>Sep 23<br><span style="font-size:11px;color:var(--text-muted)">11:45 AM</span></td>
+                <td>Rahim → Starbucks Coffee</td>
+                <td class="amount-negative">-₹450</td>
+                <td style="color:var(--text-secondary)">Food & Dining</td>
+                <td><span class="badge low">LOW</span></td>
+                <td><span style="color:var(--success);font-size:12px">✓ Completed</span></td>
+              </tr>
+              <tr onclick="app.openTransaction('TXN1002')">
+                <td class="mono" style="color:var(--accent)">TXN1002</td>
+                <td>Sep 23<br><span style="font-size:11px;color:var(--text-muted)">08:00 AM</span></td>
+                <td>TechCorp Solutions → Rahim</td>
+                <td class="amount-positive">+₹85,000</td>
+                <td style="color:var(--text-secondary)">Salary</td>
+                <td><span class="badge low">LOW</span></td>
+                <td><span style="color:var(--success);font-size:12px">✓ Completed</span></td>
+              </tr>
               <tr onclick="app.openTransaction('TXN1003')">
                 <td class="mono" style="color:var(--accent)">TXN1003</td>
                 <td>Sep 23<br><span style="font-size:11px;color:var(--text-muted)">02:31 AM</span></td>
-                <td>Rahim → Unknown Account</td>
+                <td>Rahim → Unknown Offshore Wallet</td>
                 <td class="amount-negative">-₹75,000</td>
                 <td style="color:var(--text-secondary)">Transfer</td>
                 <td><span class="badge high">HIGH</span></td>
                 <td><span style="color:var(--warning);font-size:12px">⚠ Review</span></td>
               </tr>
-              <tr onclick="app.openTransaction('TXN1002')">
-                <td class="mono" style="color:var(--accent)">TXN1002</td>
-                <td>Sep 23<br><span style="font-size:11px;color:var(--text-muted)">08:00 AM</span></td>
-                <td>Company Payroll → Rahim</td>
-                <td class="amount-positive">+₹30,000</td>
-                <td style="color:var(--text-secondary)">Salary</td>
-                <td><span class="badge low">LOW</span></td>
-                <td><span style="color:var(--success);font-size:12px">✓ Completed</span></td>
-              </tr>
-              <tr onclick="app.openTransaction('TXN1001')">
-                <td class="mono" style="color:var(--accent)">TXN1001</td>
-                <td>Sep 23<br><span style="font-size:11px;color:var(--text-muted)">09:14 AM</span></td>
-                <td>Rahim → Arjun</td>
-                <td class="amount-negative">-₹500</td>
-                <td style="color:var(--text-secondary)">Transfer</td>
-                <td><span class="badge low">LOW</span></td>
-                <td><span style="color:var(--success);font-size:12px">✓ Completed</span></td>
-              </tr>
               <tr onclick="app.openTransaction('TXN1004')">
                 <td class="mono" style="color:var(--accent)">TXN1004</td>
-                <td>Sep 22<br><span style="font-size:11px;color:var(--text-muted)">07:42 PM</span></td>
-                <td>Rahim → Merchant A</td>
-                <td class="amount-negative">-₹1,200</td>
-                <td style="color:var(--text-secondary)">Shopping</td>
+                <td>Sep 22<br><span style="font-size:11px;color:var(--text-muted)">08:42 PM</span></td>
+                <td>Rahim → Swiggy India</td>
+                <td class="amount-negative">-₹620</td>
+                <td style="color:var(--text-secondary)">Food & Dining</td>
                 <td><span class="badge low">LOW</span></td>
                 <td><span style="color:var(--success);font-size:12px">✓ Completed</span></td>
               </tr>
@@ -520,13 +520,15 @@
                 <label style="font-size:13px;font-weight:500;color:var(--text-secondary);display:block;margin-bottom:8px">Recipient</label>
                 <select id="pay-to" style="width:100%;padding:12px 14px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-primary);font-size:14px;outline:none">
                   <option value="">Select recipient</option>
-                  <option value="Arjun">Arjun — SLAC000002</option>
-                  <option value="Priya">Priya — SLAC000003</option>
-                  <option value="Aman">Aman — SLAC000004</option>
-                  <option value="Neha">Neha — SLAC000005</option>
-                  <option value="Merchant A">Merchant A — SLAC000006</option>
-                  <option value="Merchant B">Merchant B — SLAC000007</option>
-                  <option value="Unknown Account">Unknown Account — SLAC000008</option>
+                  <option value="Arjun Sharma">Arjun Sharma — SLAC000002 (Peer UPI)</option>
+                  <option value="Priya Nair">Priya Nair — SLAC000003 (Peer UPI)</option>
+                  <option value="Swiggy India">Swiggy India — SLAC000006 (Food Delivery)</option>
+                  <option value="Amazon India Pay">Amazon India Pay — SLAC000007 (Shopping)</option>
+                  <option value="Netflix India">Netflix India — SLAC000009 (Entertainment)</option>
+                  <option value="APSPDCL Electricity Board">APSPDCL Electricity Board — SLAC000011 (Utility)</option>
+                  <option value="Starbucks Coffee">Starbucks Coffee — SLAC000012 (Dining)</option>
+                  <option value="Unknown Offshore Wallet">Unknown Offshore Wallet — SLAC000098 (⚠️ Flagged Mule)</option>
+                  <option value="Suspicious Crypto P2P Desk">Suspicious Crypto P2P Desk — SLAC000099 (⚠️ High Risk)</option>
                 </select>
               </div>
 

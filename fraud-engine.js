@@ -14,8 +14,8 @@ class FraudScreeningEngine {
 
     // Known flagged / high-risk entity identifiers
     this.flaggedBeneficiaries = new Set([
-      'USR008', 'SLAC000008', 'Unknown Account',
-      'USR009', 'SLAC000009', 'High-Risk Account'
+      'USR014', 'SLAC000098', 'Unknown Offshore Wallet', 'Unknown Account',
+      'USR015', 'SLAC000099', 'Suspicious Crypto P2P Desk', 'High-Risk Account'
     ]);
 
     // User behavioral baselines (dynamically computed from history in prod)
