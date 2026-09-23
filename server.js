@@ -102,6 +102,66 @@ app.get('/api/users', (req, res) => {
   });
 });
 
+// ── MULTI-ACCOUNT MANAGEMENT ──────────────────────────────────
+app.get('/api/accounts', (req, res) => {
+  res.json({
+    success: true,
+    count: db.getAccounts().length,
+    accounts: db.getAccounts()
+  });
+});
+
+app.get('/api/accounts/:id', (req, res) => {
+  const account = db.getAccountById(req.params.id);
+  if (!account) {
+    return res.status(404).json({ success: false, error: 'Account not found' });
+  }
+  res.json({ success: true, account });
+});
+
+app.post('/api/accounts', (req, res) => {
+  try {
+    const newAccount = db.addAccount(req.body);
+    io.emit('account:new', { account: newAccount });
+    res.status(201).json({
+      success: true,
+      message: 'Bank account opened successfully',
+      account: newAccount
+    });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+app.delete('/api/accounts/:id', (req, res) => {
+  try {
+    const result = db.deleteAccount(req.params.id);
+    io.emit('account:deleted', { accountId: req.params.id });
+    res.json({
+      success: true,
+      message: 'Account closed successfully',
+      ...result
+    });
+  } catch (err) {
+    const statusCode = err.message.includes('Demo accounts') ? 403 : 400;
+    res.status(statusCode).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/accounts/:id/switch', (req, res) => {
+  try {
+    const user = db.switchAccount(req.params.id);
+    io.emit('account:switched', { user });
+    res.json({
+      success: true,
+      message: `Switched active account to ${user.name}`,
+      user
+    });
+  } catch (err) {
+    res.status(404).json({ success: false, error: err.message });
+  }
+});
+
 // ── TRANSACTIONS & FRAUD SCREENING ────────────────────────────
 app.get('/api/transactions', (req, res) => {
   const { search, risk, type, status } = req.query;

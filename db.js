@@ -6,6 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 const fraudEngine = require('./fraud-engine');
+const mysqlClient = require('./mysql-client');
 
 const DATA_DIR = path.join(__dirname, 'data');
 const STORE_PATH = path.join(DATA_DIR, 'ledger-store.json');
@@ -24,26 +25,81 @@ class LedgerDatabase {
       }
     }
 
+    // Connect to MySQL pool (auto-fallback if offline)
+    mysqlClient.init().catch(err => console.warn('[MySQL] Init notice:', err.message));
+
+    // Default Demo & Realistic Accounts
+    this.accounts = [
+      {
+        id: 'USR001',
+        name: 'Rahim',
+        email: 'rahim@secureledger.dev',
+        phone: '+91 98765 43210',
+        avatar: 'R',
+        role: 'user',
+        accountNumber: 'SLAC000001',
+        ifsc: 'SLB0001234',
+        accountType: 'Savings',
+        balance: 48350,
+        creditScore: 785,
+        riskProfile: 'Low',
+        riskScore: 12,
+        location: 'Kakinada, AP',
+        kycStatus: 'verified',
+        isDemo: true,
+        faceEnrolled: true,
+        touchEnrolled: true,
+        card: { number: '4532 •••• •••• 8921', holder: 'RAHIM', expiry: '08/29', type: 'Visa Platinum' },
+        createdAt: '2024-01-15T00:00:00.000Z'
+      },
+      {
+        id: 'USR002',
+        name: 'Arjun Sharma',
+        email: 'arjun.sharma@secureledger.dev',
+        phone: '+91 98111 22334',
+        avatar: 'AS',
+        role: 'user',
+        accountNumber: 'SLAC000002',
+        ifsc: 'SLB0001234',
+        accountType: 'Savings',
+        balance: 34200,
+        creditScore: 792,
+        riskProfile: 'Low',
+        riskScore: 10,
+        location: 'Hyderabad, TS',
+        kycStatus: 'verified',
+        isDemo: true,
+        faceEnrolled: false,
+        touchEnrolled: true,
+        card: { number: '5241 •••• •••• 3145', holder: 'ARJUN SHARMA', expiry: '11/30', type: 'Mastercard World' },
+        createdAt: '2024-02-10T00:00:00.000Z'
+      },
+      {
+        id: 'USR003',
+        name: 'Priya Nair',
+        email: 'priya.nair@example.com',
+        phone: '+91 97222 33445',
+        avatar: 'PN',
+        role: 'user',
+        accountNumber: 'SLAC000003',
+        ifsc: 'SLB0001234',
+        accountType: 'Savings',
+        balance: 62400,
+        creditScore: 804,
+        riskProfile: 'Low',
+        riskScore: 8,
+        location: 'Bangalore, KA',
+        kycStatus: 'verified',
+        isDemo: false,
+        faceEnrolled: false,
+        touchEnrolled: false,
+        card: { number: '4111 •••• •••• 5820', holder: 'PRIYA NAIR', expiry: '03/28', type: 'Visa Platinum' },
+        createdAt: '2024-03-01T00:00:00.000Z'
+      }
+    ];
+
     // Default Seed Data
-    this.currentUser = {
-      id: 'USR001',
-      name: 'Rahim',
-      email: 'rahim@securledger.dev',
-      phone: '+91 98765 43210',
-      avatar: 'R',
-      role: 'user',
-      joinDate: '2024-01-15',
-      location: 'Kakinada, AP',
-      kycStatus: 'verified',
-      accountNumber: 'SLAC000001',
-      ifsc: 'SLB0001234',
-      balance: 48350,
-      creditScore: 785,
-      riskProfile: 'Low',
-      biometricsEnrolled: true,
-      faceEnrolled: true,
-      touchEnrolled: true
-    };
+    this.currentUser = { ...this.accounts[0] };
 
     this.users = [
       { id: 'USR001', name: 'Rahim', avatar: 'R', accountId: 'SLAC000001', balance: 48350, risk: 'low', riskScore: 12, location: 'Kakinada', txnCount: 28, totalAmount: 182500, avgTxn: 1450 },
@@ -121,12 +177,30 @@ class LedgerDatabase {
       { from: 'n1', to: 'n2', amount: 320, risk: 'low', id: 'TXN1013' }
     ];
 
+    if (fs.existsSync(STORE_PATH)) {
+      try {
+        const raw = fs.readFileSync(STORE_PATH, 'utf8');
+        const parsed = JSON.parse(raw);
+        if (parsed.accounts && Array.isArray(parsed.accounts) && parsed.accounts.length) {
+          this.accounts = parsed.accounts;
+        }
+        if (parsed.currentUser) this.currentUser = parsed.currentUser;
+        if (parsed.users && parsed.users.length) this.users = parsed.users;
+        if (parsed.transactions && parsed.transactions.length) this.transactions = parsed.transactions;
+        if (parsed.journalEntries && parsed.journalEntries.length) this.journalEntries = parsed.journalEntries;
+        if (parsed.alerts && parsed.alerts.length) this.alerts = parsed.alerts;
+      } catch (e) {
+        console.warn('Could not read existing store:', e.message);
+      }
+    }
+
     this._saveToDisk();
   }
 
   _saveToDisk() {
     try {
       const data = {
+        accounts: this.accounts,
         currentUser: this.currentUser,
         users: this.users,
         transactions: this.transactions,
@@ -316,6 +390,177 @@ class LedgerDatabase {
       nodes: this.networkNodes,
       edges: this.networkEdges
     };
+  }
+
+  // ── MULTI-ACCOUNT MANAGEMENT ──────────────────────────────
+
+  getAccounts() {
+    return this.accounts;
+  }
+
+  getAccountById(id) {
+    return this.accounts.find(a => a.id === id);
+  }
+
+  addAccount(data) {
+    if (!data.name || !data.name.trim()) {
+      throw new Error('Account holder name is required');
+    }
+
+    const name = data.name.trim();
+    // Compute avatar initials
+    const parts = name.split(/\s+/);
+    const avatar = (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+
+    // Determine next sequential ID and Account Number
+    const maxNum = this.accounts.reduce((max, a) => {
+      const n = parseInt((a.id || '').replace('USR', ''), 10);
+      return isNaN(n) ? max : Math.max(max, n);
+    }, 5);
+    const nextId = 'USR' + String(maxNum + 1).padStart(3, '0');
+    const nextAccNum = 'SLAC' + String(maxNum + 1).padStart(6, '0');
+
+    const balance = Math.max(0, parseInt(data.balance, 10) || 15000);
+    const accountType = data.accountType || 'Savings';
+    const email = data.email && data.email.trim()
+      ? data.email.trim()
+      : `${name.toLowerCase().replace(/[^a-z0-9]/g, '')}@secureledger.dev`;
+    const phone = data.phone && data.phone.trim()
+      ? data.phone.trim()
+      : `+91 ${Math.floor(90000 + Math.random() * 9000)} ${Math.floor(10000 + Math.random() * 90000)}`;
+
+    const last4 = Math.floor(1000 + Math.random() * 9000);
+    const card = {
+      id: `CARD${nextId}`,
+      number: `4532 •••• •••• ${last4}`,
+      holder: name.toUpperCase(),
+      expiry: '12/31',
+      cvv: String(Math.floor(100 + Math.random() * 900)),
+      type: accountType === 'Current' ? 'Mastercard World' : 'Visa Platinum'
+    };
+
+    const newAccount = {
+      id: nextId,
+      name,
+      email,
+      phone,
+      avatar,
+      role: 'user',
+      accountNumber: nextAccNum,
+      ifsc: 'SLB0001234',
+      accountType,
+      balance,
+      creditScore: 740 + Math.floor(Math.random() * 60),
+      riskProfile: 'Low',
+      riskScore: 8,
+      location: data.location || 'India',
+      kycStatus: 'verified',
+      isDemo: false,
+      faceEnrolled: false,
+      touchEnrolled: false,
+      card,
+      createdAt: new Date().toISOString()
+    };
+
+    this.accounts.push(newAccount);
+
+    // Sync to this.users so transfers to/from this user work seamlessly
+    this.users.push({
+      id: nextId,
+      name,
+      avatar,
+      accountId: nextAccNum,
+      balance,
+      risk: 'low',
+      riskScore: 8,
+      location: newAccount.location,
+      txnCount: 1,
+      totalAmount: balance,
+      avgTxn: balance
+    });
+
+    // Opening Deposit Transaction
+    const txnId = 'TXN' + (1000 + this.transactions.length + 1);
+    const now = new Date();
+    const dateStr = now.toISOString().split('T')[0];
+    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const welcomeTxn = {
+      id: txnId,
+      date: dateStr,
+      time: timeStr,
+      sender: 'SecureLedger Central Treasury',
+      senderAcc: 'SLAC000000',
+      receiver: name,
+      receiverAcc: nextAccNum,
+      amount: balance,
+      type: 'Credit',
+      category: 'Deposit',
+      risk: 'low',
+      riskScore: 1,
+      status: 'Completed',
+      location: newAccount.location,
+      device: 'Core Banking Engine',
+      method: 'Account Opening Deposit',
+      note: 'Account Opening Initial Deposit',
+      reasons: []
+    };
+    this.transactions.unshift(welcomeTxn);
+
+    // Double-entry record
+    this.journalEntries.push(
+      { id: `JE-${txnId}-1`, txnId, account: 'SLAC000000', type: 'DEBIT', amount: balance, date: dateStr },
+      { id: `JE-${txnId}-2`, txnId, account: nextAccNum, type: 'CREDIT', amount: balance, date: dateStr }
+    );
+
+    this._saveToDisk();
+
+    // Async sync to MySQL if active
+    if (mysqlClient.isConnected) {
+      mysqlClient.execute(
+        `INSERT INTO accounts (id, name, email, phone, avatar, role, account_number, ifsc, account_type, balance, credit_score, risk_profile, risk_score, location, kyc_status, is_demo)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [newAccount.id, newAccount.name, newAccount.email, newAccount.phone, newAccount.avatar, newAccount.role, newAccount.accountNumber, newAccount.ifsc, newAccount.accountType, newAccount.balance, newAccount.creditScore, newAccount.riskProfile, newAccount.riskScore, newAccount.location, newAccount.kycStatus, false]
+      ).catch(e => console.warn('[MySQL] Account insert notice:', e.message));
+    }
+
+    return newAccount;
+  }
+
+  deleteAccount(id) {
+    if (id === 'USR001' || id === 'USR002') {
+      throw new Error('Demo accounts (Rahim & Arjun Sharma) are protected and cannot be deleted.');
+    }
+
+    const idx = this.accounts.findIndex(a => a.id === id);
+    if (idx === -1) {
+      throw new Error(`Account with ID ${id} not found`);
+    }
+
+    const [deleted] = this.accounts.splice(idx, 1);
+    this.users = this.users.filter(u => u.id !== id);
+
+    // If currently active account was deleted, switch back to Rahim
+    if (this.currentUser.id === id) {
+      this.currentUser = { ...this.accounts[0] };
+    }
+
+    this._saveToDisk();
+
+    // Async sync to MySQL if active
+    if (mysqlClient.isConnected) {
+      mysqlClient.execute(`DELETE FROM accounts WHERE id = ?`, [id])
+        .catch(e => console.warn('[MySQL] Account delete notice:', e.message));
+    }
+
+    return { success: true, deletedId: id, account: deleted };
+  }
+
+  switchAccount(id) {
+    const acc = this.accounts.find(a => a.id === id);
+    if (!acc) throw new Error('Account not found');
+    this.currentUser = { ...acc };
+    this._saveToDisk();
+    return this.currentUser;
   }
 }
 

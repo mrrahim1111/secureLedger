@@ -209,6 +209,138 @@ const API = {
     return { success: true, alert };
   },
 
+  // ── MULTI-ACCOUNT MANAGEMENT API ──────────────────────────
+  /**
+   * Fetches all registered accounts
+   */
+  async getAccounts() {
+    if (this.isBackendConnected) {
+      try {
+        const res = await fetch(`${this.baseUrl}/api/accounts`);
+        if (res.ok) {
+          const data = await res.json();
+          return data.accounts || [];
+        }
+      } catch (err) {
+        console.warn('API getAccounts fallback:', err);
+      }
+    }
+    return this._getLocalAccounts();
+  },
+
+  /**
+   * Creates a new bank account
+   */
+  async createAccount(payload) {
+    if (this.isBackendConnected) {
+      try {
+        const res = await fetch(`${this.baseUrl}/api/accounts`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to create account');
+        return data;
+      } catch (err) {
+        console.warn('API createAccount error:', err);
+        throw err;
+      }
+    }
+    return this._localCreateAccount(payload);
+  },
+
+  /**
+   * Deletes / closes an account
+   */
+  async deleteAccount(accountId) {
+    if (this.isBackendConnected) {
+      try {
+        const res = await fetch(`${this.baseUrl}/api/accounts/${accountId}`, {
+          method: 'DELETE'
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to delete account');
+        return data;
+      } catch (err) {
+        console.warn('API deleteAccount error:', err);
+        throw err;
+      }
+    }
+    return this._localDeleteAccount(accountId);
+  },
+
+  /**
+   * Switches active account
+   */
+  async switchAccount(accountId) {
+    if (this.isBackendConnected) {
+      try {
+        const res = await fetch(`${this.baseUrl}/api/accounts/${accountId}/switch`, {
+          method: 'POST'
+        });
+        if (res.ok) return await res.json();
+      } catch (err) {
+        console.warn('API switchAccount error:', err);
+      }
+    }
+    return { success: true, accountId };
+  },
+
+  _getLocalAccounts() {
+    const raw = localStorage.getItem('sl_local_accounts');
+    if (raw) {
+      try { return JSON.parse(raw); } catch (e) {}
+    }
+    const def = [
+      { id: 'USR001', name: 'Rahim', role: 'user', accountNumber: 'SLAC000001', ifsc: 'SLB0001234', balance: 48350, avatar: 'R', isDemo: true, faceEnrolled: true, touchEnrolled: true },
+      { id: 'USR002', name: 'Arjun Sharma', role: 'user', accountNumber: 'SLAC000002', ifsc: 'SLB0001234', balance: 34200, avatar: 'AS', isDemo: true, faceEnrolled: false, touchEnrolled: true }
+    ];
+    localStorage.setItem('sl_local_accounts', JSON.stringify(def));
+    return def;
+  },
+
+  _localCreateAccount(data) {
+    const accounts = this._getLocalAccounts();
+    const maxNum = accounts.reduce((max, a) => {
+      const n = parseInt((a.id || '').replace('USR', ''), 10);
+      return isNaN(n) ? max : Math.max(max, n);
+    }, 2);
+    const nextId = 'USR' + String(maxNum + 1).padStart(3, '0');
+    const nextAccNum = 'SLAC' + String(maxNum + 1).padStart(6, '0');
+    const parts = (data.name || 'User').trim().split(/\s+/);
+    const avatar = (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+
+    const newAcc = {
+      id: nextId,
+      name: data.name,
+      email: data.email || `${data.name.toLowerCase().replace(/[^a-z0-9]/g, '')}@secureledger.dev`,
+      phone: data.phone || '+91 98000 12345',
+      avatar,
+      accountNumber: nextAccNum,
+      ifsc: 'SLB0001234',
+      accountType: data.accountType || 'Savings',
+      balance: parseInt(data.balance, 10) || 15000,
+      isDemo: false,
+      faceEnrolled: false,
+      touchEnrolled: false,
+      createdAt: new Date().toISOString()
+    };
+    accounts.push(newAcc);
+    localStorage.setItem('sl_local_accounts', JSON.stringify(accounts));
+    return { success: true, account: newAcc };
+  },
+
+  _localDeleteAccount(id) {
+    if (id === 'USR001' || id === 'USR002') {
+      throw new Error('Demo accounts are protected and cannot be deleted.');
+    }
+    let accounts = this._getLocalAccounts();
+    accounts = accounts.filter(a => a.id !== id);
+    localStorage.setItem('sl_local_accounts', JSON.stringify(accounts));
+    return { success: true, deletedId: id };
+  },
+
   // ── LOCAL FALLBACK COMPUTATION ────────────────────────────
   _localScreenTransaction({ receiverName, amount }) {
     const numAmount = parseInt(amount, 10) || 0;

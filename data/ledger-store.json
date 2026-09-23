@@ -1,4 +1,87 @@
 {
+  "accounts": [
+    {
+      "id": "USR001",
+      "name": "Rahim",
+      "email": "rahim@secureledger.dev",
+      "phone": "+91 98765 43210",
+      "avatar": "R",
+      "role": "user",
+      "accountNumber": "SLAC000001",
+      "ifsc": "SLB0001234",
+      "accountType": "Savings",
+      "balance": 48350,
+      "creditScore": 785,
+      "riskProfile": "Low",
+      "riskScore": 12,
+      "location": "Kakinada, AP",
+      "kycStatus": "verified",
+      "isDemo": true,
+      "faceEnrolled": true,
+      "touchEnrolled": true,
+      "card": {
+        "number": "4532 •••• •••• 8921",
+        "holder": "RAHIM",
+        "expiry": "08/29",
+        "type": "Visa Platinum"
+      },
+      "createdAt": "2024-01-15T00:00:00.000Z"
+    },
+    {
+      "id": "USR002",
+      "name": "Arjun Sharma",
+      "email": "arjun.sharma@secureledger.dev",
+      "phone": "+91 98111 22334",
+      "avatar": "AS",
+      "role": "user",
+      "accountNumber": "SLAC000002",
+      "ifsc": "SLB0001234",
+      "accountType": "Savings",
+      "balance": 34200,
+      "creditScore": 792,
+      "riskProfile": "Low",
+      "riskScore": 10,
+      "location": "Hyderabad, TS",
+      "kycStatus": "verified",
+      "isDemo": true,
+      "faceEnrolled": false,
+      "touchEnrolled": true,
+      "card": {
+        "number": "5241 •••• •••• 3145",
+        "holder": "ARJUN SHARMA",
+        "expiry": "11/30",
+        "type": "Mastercard World"
+      },
+      "createdAt": "2024-02-10T00:00:00.000Z"
+    },
+    {
+      "id": "USR003",
+      "name": "Priya Nair",
+      "email": "priya.nair@example.com",
+      "phone": "+91 97222 33445",
+      "avatar": "PN",
+      "role": "user",
+      "accountNumber": "SLAC000003",
+      "ifsc": "SLB0001234",
+      "accountType": "Savings",
+      "balance": 62400,
+      "creditScore": 804,
+      "riskProfile": "Low",
+      "riskScore": 8,
+      "location": "Bangalore, KA",
+      "kycStatus": "verified",
+      "isDemo": false,
+      "faceEnrolled": false,
+      "touchEnrolled": false,
+      "card": {
+        "number": "4111 •••• •••• 5820",
+        "holder": "PRIYA NAIR",
+        "expiry": "03/28",
+        "type": "Visa Platinum"
+      },
+      "createdAt": "2024-03-01T00:00:00.000Z"
+    }
+  ],
   "currentUser": {
     "id": "USR001",
     "name": "Rahim",
@@ -83,19 +166,6 @@
       "txnCount": 19,
       "totalAmount": 198000,
       "avgTxn": 3200
-    },
-    {
-      "id": "USR006",
-      "name": "Swiggy India",
-      "avatar": "SW",
-      "accountId": "SLAC000006",
-      "balance": 4280000,
-      "risk": "low",
-      "riskScore": 5,
-      "location": "Bangalore",
-      "txnCount": 2840,
-      "totalAmount": 42000000,
-      "avgTxn": 450
     },
     {
       "id": "USR007",
@@ -216,6 +286,26 @@
     }
   ],
   "transactions": [
+    {
+      "id": "TXN1014",
+      "date": "2026-09-23",
+      "time": "08:13 PM",
+      "sender": "SecureLedger Central Treasury",
+      "senderAcc": "SLAC000000",
+      "receiver": "Vikram Malhotra",
+      "receiverAcc": "SLAC000006",
+      "amount": 35000,
+      "type": "Credit",
+      "category": "Deposit",
+      "risk": "low",
+      "riskScore": 1,
+      "status": "Completed",
+      "location": "India",
+      "device": "Core Banking Engine",
+      "method": "Account Opening Deposit",
+      "note": "Account Opening Initial Deposit",
+      "reasons": []
+    },
     {
       "id": "TXN1001",
       "date": "2026-09-23",
@@ -688,6 +778,22 @@
       "type": "CREDIT",
       "amount": 320,
       "date": "2026-09-18"
+    },
+    {
+      "id": "JE-TXN1014-1",
+      "txnId": "TXN1014",
+      "account": "SLAC000000",
+      "type": "DEBIT",
+      "amount": 35000,
+      "date": "2026-09-23"
+    },
+    {
+      "id": "JE-TXN1014-2",
+      "txnId": "TXN1014",
+      "account": "SLAC000006",
+      "type": "CREDIT",
+      "amount": 35000,
+      "date": "2026-09-23"
     }
   ],
   "alerts": [
@@ -913,5 +1019,5 @@
       "id": "TXN1013"
     }
   ],
-  "updatedAt": "2026-09-23T13:18:04.022Z"
+  "updatedAt": "2026-09-23T14:43:29.984Z"
 }
