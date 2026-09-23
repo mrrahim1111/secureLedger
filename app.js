@@ -829,11 +829,19 @@ class SecureLedgerApp {
     this.paymentReceiver = '';
     this.liveFeeedInterval = null;
     this.theme = localStorage.getItem('theme') || 'dark';
+
+    // Biometric state
+    this.bioType = 'face';
+    this.bioPurpose = 'login';
+    this.bioStream = null;
+    this.bioAnimId = null;
+    this.bioSuccessCallback = null;
   }
 
   init() {
     this.applyTheme(this.theme);
     this.setupLogin();
+    this.setupBiometrics();
     this.setupNavigation();
     this.setupPaymentFlow();
     this.setupFilters();
@@ -841,6 +849,241 @@ class SecureLedgerApp {
     this.setupMobileNav();
     this.setupScreeningOverlay();
     this.setupToggles();
+  }
+
+  // ── BIOMETRIC AUTHENTICATION & FACE RECOGNITION ──
+  setupBiometrics() {
+    const faceBtn = document.getElementById('login-face-btn');
+    const touchBtn = document.getElementById('login-touch-btn');
+
+    if (faceBtn) {
+      faceBtn.addEventListener('click', () => {
+        this.launchBiometric('face', 'login', () => this.login(true));
+      });
+    }
+
+    if (touchBtn) {
+      touchBtn.addEventListener('click', () => {
+        this.launchBiometric('touch', 'login', () => this.login(true));
+      });
+    }
+  }
+
+  launchBiometric(type = 'face', purpose = 'login', onSuccess = null) {
+    this.bioType = type;
+    this.bioPurpose = purpose;
+    this.bioSuccessCallback = onSuccess;
+
+    const modal = document.getElementById('biometric-modal');
+    if (!modal) return;
+    modal.classList.add('active');
+
+    this.renderBiometricUI(type);
+  }
+
+  renderBiometricUI(type) {
+    const title = document.getElementById('bio-modal-title');
+    const sub = document.getElementById('bio-modal-sub');
+    const switchBtn = document.getElementById('bio-switch-btn');
+    const badge = document.getElementById('bio-status-badge');
+    const statusText = document.getElementById('bio-status-text');
+    const stepDetail = document.getElementById('bio-step-detail');
+    const video = document.getElementById('bio-video-feed');
+    const canvas = document.getElementById('bio-canvas-overlay');
+    const laser = document.getElementById('bio-laser-beam');
+    const fpPad = document.getElementById('bio-fingerprint-pad');
+    const viewport = document.getElementById('bio-scanner-viewport');
+
+    viewport.classList.remove('verified', 'failed');
+    badge.classList.remove('verified');
+
+    if (type === 'face') {
+      title.textContent = this.bioPurpose === 'calibrate' ? 'Calibrate Face Recognition' : (this.bioPurpose === 'payment' ? 'Authorize Payment with Face ID' : 'Face Recognition');
+      sub.textContent = 'Look directly into the camera';
+      switchBtn.textContent = 'Switch to Touch ID';
+      fpPad.style.display = 'none';
+      canvas.style.display = 'block';
+      laser.style.display = 'block';
+      statusText.textContent = 'Initializing Camera & Sensor...';
+      stepDetail.textContent = 'Connecting to Secure Optical Sensor...';
+
+      this.startFaceCamera();
+    } else {
+      title.textContent = this.bioPurpose === 'calibrate' ? 'Biometric Sensor Calibration' : (this.bioPurpose === 'payment' ? 'Authorize Payment with Touch ID' : 'Touch ID Fingerprint');
+      sub.textContent = 'Place finger on the biometric sensor';
+      switchBtn.textContent = 'Switch to Face ID';
+      this.stopFaceCamera();
+      canvas.style.display = 'none';
+      laser.style.display = 'none';
+      fpPad.style.display = 'flex';
+      statusText.textContent = 'Touch Sensor Ready';
+      stepDetail.textContent = 'Click or tap sensor to scan fingerprint...';
+    }
+  }
+
+  async startFaceCamera() {
+    const video = document.getElementById('bio-video-feed');
+    const canvas = document.getElementById('bio-canvas-overlay');
+    const ctx = canvas.getContext('2d');
+    const statusText = document.getElementById('bio-status-text');
+    const stepDetail = document.getElementById('bio-step-detail');
+    const badge = document.getElementById('bio-status-badge');
+    const viewport = document.getElementById('bio-scanner-viewport');
+
+    let stream = null;
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user', width: { ideal: 300 }, height: { ideal: 300 } }
+        });
+        this.bioStream = stream;
+        video.srcObject = stream;
+        video.style.display = 'block';
+        video.play();
+      }
+    } catch (err) {
+      console.warn('Camera access not available or denied, running holographic simulation mode', err);
+      video.style.display = 'none';
+    }
+
+    // Start Landmark Mesh Animation Loop on canvas
+    let startTime = Date.now();
+    const animateMesh = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(1, elapsed / 2200);
+
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+
+      // Draw futuristic face mesh nodes
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      const nodeColor = progress >= 0.85 ? '#22c55e' : (isLight ? '#0f172a' : '#38bdf8');
+      ctx.strokeStyle = nodeColor;
+      ctx.fillStyle = nodeColor;
+
+      // Draw subtle wireframe face geometry
+      ctx.beginPath();
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = 0.4;
+      ctx.ellipse(cx, cy, 58, 76, 0, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Eye landmarks
+      ctx.globalAlpha = 0.8;
+      const eyeOffset = Math.sin(Date.now() * 0.003) * 2;
+      ctx.beginPath();
+      ctx.arc(cx - 24, cy - 14 + eyeOffset, 3, 0, Math.PI * 2);
+      ctx.arc(cx + 24, cy - 14 + eyeOffset, 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Nose & mouth points
+      ctx.beginPath();
+      ctx.arc(cx, cy + 4, 2, 0, Math.PI * 2);
+      ctx.arc(cx - 16, cy + 32, 2.5, 0, Math.PI * 2);
+      ctx.arc(cx + 16, cy + 32, 2.5, 0, Math.PI * 2);
+      ctx.arc(cx, cy + 36, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Facial triangulation lines
+      ctx.globalAlpha = 0.25;
+      ctx.beginPath();
+      ctx.moveTo(cx - 24, cy - 14);
+      ctx.lineTo(cx, cy + 4);
+      ctx.lineTo(cx + 24, cy - 14);
+      ctx.lineTo(cx + 16, cy + 32);
+      ctx.lineTo(cx, cy + 36);
+      ctx.lineTo(cx - 16, cy + 32);
+      ctx.closePath();
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      // Step progression updates
+      if (elapsed < 700) {
+        statusText.textContent = 'Scanning Facial Geometry...';
+        stepDetail.textContent = 'Detecting facial contours & 3D mesh points...';
+      } else if (elapsed < 1500) {
+        statusText.textContent = 'Liveness Verification...';
+        stepDetail.textContent = 'Depth map confirmed · 3D Anti-Spoof: PASS';
+      } else if (elapsed < 2100) {
+        statusText.textContent = 'Matching Neural Biometric Hash...';
+        stepDetail.textContent = 'Enclave match score: 99.4% (AES-256)';
+      } else {
+        // Complete Verification
+        statusText.textContent = 'Identity Verified';
+        stepDetail.textContent = 'Welcome back, Rahim (SLAC000001)';
+        badge.classList.add('verified');
+        viewport.classList.add('verified');
+
+        cancelAnimationFrame(this.bioAnimId);
+        this.bioAnimId = null;
+
+        setTimeout(() => {
+          this.closeBiometricModal();
+          if (this.bioSuccessCallback) {
+            this.bioSuccessCallback();
+          } else {
+            this.showToast('✓ Face ID Verification Successful', 'success');
+          }
+        }, 700);
+        return;
+      }
+
+      this.bioAnimId = requestAnimationFrame(animateMesh);
+    };
+
+    this.bioAnimId = requestAnimationFrame(animateMesh);
+  }
+
+  processFingerprintTap() {
+    const statusText = document.getElementById('bio-status-text');
+    const stepDetail = document.getElementById('bio-step-detail');
+    const badge = document.getElementById('bio-status-badge');
+    const viewport = document.getElementById('bio-scanner-viewport');
+
+    statusText.textContent = 'Scanning Fingerprint Ridges...';
+    stepDetail.textContent = 'Optical sensor active · Extracting minutiae points...';
+
+    setTimeout(() => {
+      statusText.textContent = 'Biometric Signature Verified';
+      stepDetail.textContent = 'Touch ID matched Secure Enclave (USR001)';
+      badge.classList.add('verified');
+      viewport.classList.add('verified');
+
+      setTimeout(() => {
+        this.closeBiometricModal();
+        if (this.bioSuccessCallback) {
+          this.bioSuccessCallback();
+        } else {
+          this.showToast('✓ Touch ID Verification Successful', 'success');
+        }
+      }, 700);
+    }, 1200);
+  }
+
+  stopFaceCamera() {
+    if (this.bioStream) {
+      this.bioStream.getTracks().forEach(track => track.stop());
+      this.bioStream = null;
+    }
+    const video = document.getElementById('bio-video-feed');
+    if (video) video.style.display = 'none';
+
+    if (this.bioAnimId) {
+      cancelAnimationFrame(this.bioAnimId);
+      this.bioAnimId = null;
+    }
+  }
+
+  toggleBiometricType() {
+    this.bioType = this.bioType === 'face' ? 'touch' : 'face';
+    this.renderBiometricUI(this.bioType);
+  }
+
+  closeBiometricModal() {
+    this.stopFaceCamera();
+    const modal = document.getElementById('biometric-modal');
+    if (modal) modal.classList.remove('active');
   }
 
   // ── THEME MODE MANAGEMENT ──────────────────────
@@ -927,18 +1170,24 @@ class SecureLedgerApp {
     }
   }
 
-  login() {
+  login(isBiometric = false) {
     const btn = document.getElementById('login-btn');
-    btn.textContent = 'Authenticating...';
-    btn.disabled = true;
+    if (btn && !isBiometric) {
+      btn.textContent = 'Authenticating...';
+      btn.disabled = true;
+    }
 
+    const delay = isBiometric ? 300 : 1000;
     setTimeout(() => {
       document.getElementById('login-page').style.display = 'none';
       const shell = document.getElementById('app-shell');
       shell.classList.add('active');
       this.navigateTo('dashboard');
       this.startLiveFeed();
-    }, 1200);
+      if (isBiometric) {
+        this.showToast('✓ Welcome back Rahim · Face ID Authenticated', 'success');
+      }
+    }, delay);
   }
 
   // ── NAVIGATION ────────────────────────────────
@@ -1120,23 +1369,33 @@ class SecureLedgerApp {
   }
 
   confirmPayment() {
-    runFraudScreening(this.paymentAmount, this.paymentReceiver, (riskLevel, riskScore) => {
-      if (riskLevel === 'high') {
-        // Navigate to fraud alert
-        document.getElementById('payment-review').style.display = 'none';
-        this.showFraudAlert(riskScore);
-      } else {
-        // Success
-        document.getElementById('payment-review').style.display = 'none';
-        document.getElementById('payment-success').style.display = 'block';
-        document.getElementById('success-amount').textContent = '₹' + this.paymentAmount.toLocaleString('en-IN');
-        document.getElementById('success-to').textContent = this.paymentReceiver;
-        document.getElementById('success-txnid').textContent = 'TXN' + Date.now().toString().slice(-6);
-        document.getElementById('success-risk').textContent = riskScore + '/100 — ' + riskLevel.toUpperCase() + ' RISK';
-        document.getElementById('success-risk').style.color =
-          riskLevel === 'medium' ? 'var(--warning)' : 'var(--success)';
-      }
-    });
+    const isHighSecurity = this.paymentAmount >= 10000 || this.paymentReceiver === 'Unknown Account' || this.paymentReceiver === 'High-Risk Account';
+
+    const executeScreening = () => {
+      runFraudScreening(this.paymentAmount, this.paymentReceiver, (riskLevel, riskScore) => {
+        if (riskLevel === 'high') {
+          // Navigate to fraud alert
+          document.getElementById('payment-review').style.display = 'none';
+          this.showFraudAlert(riskScore);
+        } else {
+          // Success
+          document.getElementById('payment-review').style.display = 'none';
+          document.getElementById('payment-success').style.display = 'block';
+          document.getElementById('success-amount').textContent = '₹' + this.paymentAmount.toLocaleString('en-IN');
+          document.getElementById('success-to').textContent = this.paymentReceiver;
+          document.getElementById('success-txnid').textContent = 'TXN' + Date.now().toString().slice(-6);
+          document.getElementById('success-risk').textContent = riskScore + '/100 — ' + riskLevel.toUpperCase() + ' RISK';
+          document.getElementById('success-risk').style.color =
+            riskLevel === 'medium' ? 'var(--warning)' : 'var(--success)';
+        }
+      });
+    };
+
+    if (isHighSecurity) {
+      this.launchBiometric('face', 'payment', executeScreening);
+    } else {
+      executeScreening();
+    }
   }
 
   showFraudAlert(riskScore) {

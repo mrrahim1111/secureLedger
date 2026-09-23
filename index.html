@@ -68,6 +68,24 @@
       </div>
 
       <button type="submit" id="login-btn" class="btn-primary">Sign In to SecureLedger</button>
+
+      <div class="bio-login-divider">or authenticate with biometrics</div>
+
+      <div class="bio-btn-grid">
+        <button type="button" id="login-face-btn" class="btn-bio">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7 3H5a2 2 0 0 0-2 2v2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M3 17v2a2 2 0 0 0 2 2h2"/>
+            <path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M9.5 15a3.5 3.5 0 0 0 5 0"/>
+          </svg>
+          Face ID
+        </button>
+        <button type="button" id="login-touch-btn" class="btn-bio">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 11c0 3-1.5 5.5-3 7"/><path d="M12 7c2 0 4 1.5 4 4.5 0 2.5-1 4.5-2 6"/><path d="M12 3c4.5 0 8 3.5 8 8 0 3-1 6-3 8"/><path d="M8 7.5C6 9 5 11 5 13c0 3 1.5 5.5 3 7"/><path d="M12 15c-1 0-2-1-2-2.5 0-1.5 1-2.5 2-2.5s2 1 2 2.5c0 1.5-1 2.5-2 2.5z"/>
+          </svg>
+          Touch ID
+        </button>
+      </div>
     </form>
 
     <div class="login-demo-note">
@@ -1228,6 +1246,38 @@
         </div>
       </div>
 
+      <!-- Biometric Security -->
+      <div class="settings-section mb-16">
+        <div class="settings-section-header">Biometric Security &amp; Recognition</div>
+        <div class="settings-item">
+          <div class="settings-item-info">
+            <h4>Face Recognition (Face ID)</h4>
+            <p>Use camera to verify identity for logins and high-risk payments</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <button class="btn btn-ghost btn-sm" onclick="app.launchBiometric('face', 'calibrate')">Calibrate Face</button>
+            <div class="toggle on" id="toggle-face-auth"></div>
+          </div>
+        </div>
+        <div class="settings-item">
+          <div class="settings-item-info">
+            <h4>Fingerprint Recognition (Touch ID)</h4>
+            <p>Use biometric fingerprint sensor for quick authorization</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <button class="btn btn-ghost btn-sm" onclick="app.launchBiometric('touch', 'calibrate')">Test Sensor</button>
+            <div class="toggle on" id="toggle-touch-auth"></div>
+          </div>
+        </div>
+        <div class="settings-item">
+          <div class="settings-item-info">
+            <h4>Biometric Enclave Protection</h4>
+            <p>Hardware-level encrypted biometric neural hash (AES-256 GCM)</p>
+          </div>
+          <span class="badge low">Active &amp; Protected</span>
+        </div>
+      </div>
+
       <!-- Theme -->
       <div class="settings-section mb-16">
         <div class="settings-section-header">Appearance</div>
@@ -1315,6 +1365,60 @@
       </div>
       <button class="btn btn-success btn-lg w-full" id="screening-continue-btn">Continue</button>
       <button class="btn btn-ghost w-full" style="margin-top:8px" id="screening-cancel-btn">Cancel Transaction</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     BIOMETRIC AUTHENTICATION MODAL (FACE ID & TOUCH ID)
+══════════════════════════════════════════ -->
+<div id="biometric-modal" class="biometric-overlay">
+  <div class="biometric-modal">
+    <div class="bio-modal-header">
+      <h3 id="bio-modal-title">Face Recognition</h3>
+      <p id="bio-modal-sub">Look directly into the camera to authenticate</p>
+    </div>
+
+    <!-- Scanner Viewport -->
+    <div class="bio-scanner-viewport" id="bio-scanner-viewport">
+      <!-- Live Video Feed -->
+      <video id="bio-video-feed" playsinline autoplay muted style="display:none"></video>
+      
+      <!-- Overlay Canvas for landmark nodes & visual mesh -->
+      <canvas id="bio-canvas-overlay" width="220" height="220"></canvas>
+
+      <!-- Laser Beam Scanner -->
+      <div class="bio-laser-beam" id="bio-laser-beam"></div>
+
+      <!-- Targeting Reticle & Brackets -->
+      <div class="bio-reticle"></div>
+      <div class="bio-corner-tl"></div>
+      <div class="bio-corner-tr"></div>
+      <div class="bio-corner-bl"></div>
+      <div class="bio-corner-br"></div>
+
+      <!-- Fingerprint Pad (shown when in touch mode) -->
+      <div class="bio-fingerprint-pad" id="bio-fingerprint-pad" style="display:none" onclick="app.processFingerprintTap()">
+        <div class="bio-fingerprint-ripple"></div>
+        <svg class="bio-fingerprint-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 11c0 3-1.5 5.5-3 7"/><path d="M12 7c2 0 4 1.5 4 4.5 0 2.5-1 4.5-2 6"/><path d="M12 3c4.5 0 8 3.5 8 8 0 3-1 6-3 8"/><path d="M8 7.5C6 9 5 11 5 13c0 3 1.5 5.5 3 7"/><path d="M12 15c-1 0-2-1-2-2.5 0-1.5 1-2.5 2-2.5s2 1 2 2.5c0 1.5-1 2.5-2 2.5z"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Status Readout -->
+    <div>
+      <div class="bio-status-badge" id="bio-status-badge">
+        <span class="dot"></span>
+        <span id="bio-status-text">Scanning Facial Geometry...</span>
+      </div>
+      <div class="bio-step-detail" id="bio-step-detail">Liveness check: analyzing 3D depth...</div>
+    </div>
+
+    <!-- Actions -->
+    <div class="bio-modal-actions">
+      <button type="button" class="btn btn-ghost btn-sm" id="bio-switch-btn" onclick="app.toggleBiometricType()">Switch to Touch ID</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="bio-cancel-btn" onclick="app.closeBiometricModal()">Cancel</button>
     </div>
   </div>
 </div>

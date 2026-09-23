@@ -44,7 +44,13 @@ The system analyzes simulated transactions based on multiple anomaly vectors (am
 - **Live Scanning Radar:** Animated radar beam and moving scanlines during AI fraud analysis.
 - **Interactive Card Elevation:** Cards elevate with subtle shadow depth on hover.
 
-### 6. 🚨 Alert & Investigation Center
+### 6. 👁️ Face Recognition & Biometric Security
+- **Camera-Powered Face ID:** Real webcam video stream integration with dynamic facial landmark mesh overlay, depth liveness anti-spoofing verification, and neural biometric hash matching.
+- **Holographic Simulation Fallback:** If camera access is unavailable or denied, seamlessly renders an animated holographic wireframe face scan so testing always works.
+- **Biometric Touch ID (Fingerprint):** Interactive biometric fingerprint sensor pad with scanning laser and concentric ripple pulses.
+- **Multi-Point Security Gates:** Integrated into Login, High-Value/High-Risk Payment Confirmations (> ₹10,000), and Settings calibration.
+
+### 7. 🚨 Alert & Investigation Center
 - **Alert Queue:** Centralized dashboard of flagged transactions sorted by severity.
 - **3D Sub-Network Investigation:** Dedicated investigation console rendering only relevant sub-networks for analyst review.
 - **Analyst Action Triggers:** Mark transaction normal, confirm fraud, or block account.

@@ -348,6 +348,295 @@ img { max-width: 100%; }
 
 .btn-primary:active { transform: translateY(0) scale(0.98); }
 
+/* ─── Biometric Login Options ───────────────────────────── */
+.bio-login-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 16px;
+  color: var(--text-muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+}
+.bio-login-divider::before,
+.bio-login-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.bio-btn-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.btn-bio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.btn-bio svg {
+  width: 17px;
+  height: 17px;
+  color: var(--accent);
+  transition: transform var(--transition);
+}
+.btn-bio:hover {
+  background: var(--bg-elevated);
+  border-color: var(--border-light);
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+.btn-bio:hover svg {
+  transform: scale(1.1);
+}
+.btn-bio:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ─── BIOMETRIC SCANNER MODAL ────────────────────────────── */
+.biometric-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.biometric-overlay.active {
+  display: flex;
+}
+
+.biometric-modal {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 440px;
+  padding: 32px 28px 24px;
+  box-shadow: var(--shadow-lg), 0 0 40px rgba(0, 0, 0, 0.6);
+  position: relative;
+  text-align: center;
+  overflow: hidden;
+}
+
+.biometric-modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #22c55e, #3b82f6, #a855f7);
+}
+
+.bio-modal-header {
+  margin-bottom: 20px;
+}
+.bio-modal-header h3 {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--text-primary);
+}
+.bio-modal-header p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* Scanner Frame Container */
+.bio-scanner-viewport {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #09090b;
+  border: 2px solid var(--border-light);
+  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bio-scanner-viewport.verified {
+  border-color: var(--success);
+  box-shadow: 0 0 30px rgba(34, 197, 94, 0.35);
+}
+
+.bio-scanner-viewport.failed {
+  border-color: var(--danger);
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.35);
+}
+
+#bio-video-feed {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+  display: block;
+}
+
+#bio-canvas-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Laser Scanline Beam */
+.bio-laser-beam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #22c55e, #ffffff, #22c55e, transparent);
+  box-shadow: 0 0 12px #22c55e, 0 0 24px #22c55e;
+  animation: laserSweep 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes laserSweep {
+  0% { top: 8%; opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { top: 92%; opacity: 0; }
+}
+
+/* Biometric Targeting Reticle */
+.bio-reticle {
+  position: absolute;
+  inset: 16px;
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: reticleRotate 20s linear infinite;
+}
+
+@keyframes reticleRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.bio-corner-tl, .bio-corner-tr, .bio-corner-bl, .bio-corner-br {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-color: #22c55e;
+  border-style: solid;
+  pointer-events: none;
+}
+.bio-corner-tl { top: 28px; left: 28px; border-width: 2px 0 0 2px; }
+.bio-corner-tr { top: 28px; right: 28px; border-width: 2px 2px 0 0; }
+.bio-corner-bl { bottom: 28px; left: 28px; border-width: 0 0 2px 2px; }
+.bio-corner-br { bottom: 28px; right: 28px; border-width: 0 2px 2px 0; }
+
+/* Fingerprint Scanning Pad */
+.bio-fingerprint-pad {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+}
+.bio-fingerprint-icon {
+  width: 80px;
+  height: 80px;
+  color: var(--accent);
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.bio-fingerprint-pad:active .bio-fingerprint-icon {
+  transform: scale(0.92);
+  color: var(--success);
+}
+.bio-fingerprint-ripple {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  animation: fpRipple 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+  pointer-events: none;
+}
+@keyframes fpRipple {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* Biometric Status Readout */
+.bio-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+.bio-status-badge .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3b82f6;
+  animation: pulse 1.5s infinite;
+}
+.bio-status-badge.verified {
+  border-color: var(--success-border);
+  background: var(--success-bg);
+  color: var(--success);
+}
+.bio-status-badge.verified .dot {
+  background: var(--success);
+  animation: none;
+}
+
+.bio-step-detail {
+  font-size: 12px;
+  color: var(--text-muted);
+  min-height: 18px;
+  margin-bottom: 20px;
+  font-family: var(--font-mono);
+}
+
+.bio-modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+
 .login-demo-note {
   margin-top: 24px;
   padding: 12px 16px;
