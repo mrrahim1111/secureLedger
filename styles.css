@@ -2068,3 +2068,1377 @@ img { max-width: 100%; }
   .filter-bar { flex-direction: column; align-items: stretch; }
   .btn-group { flex-wrap: wrap; }
 }
+
+/* ─────────────────────────────────────────────────────────────
+   UPI PAYMENT EXPERIENCE — MODERN FINTECH INTERFACE STYLES
+   ───────────────────────────────────────────────────────────── */
+
+/* UPI Primary Balance Card */
+.upi-balance-card {
+  background: linear-gradient(135deg, rgba(24, 24, 27, 0.95), rgba(15, 23, 42, 0.9));
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-radius: 18px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.upi-balance-card::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.upi-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.upi-bank-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.upi-bank-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+}
+
+.upi-bank-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.upi-bank-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+}
+
+.upi-vpa-id {
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.upi-network-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.28);
+  color: #22c55e;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.upi-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+  animation: upiPulse 1.8s infinite;
+}
+
+@keyframes upiPulse {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 12px #22c55e; }
+  100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+.upi-balance-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.upi-eye-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.upi-eye-btn:hover {
+  background: var(--surface-2);
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+}
+
+.upi-balance-val {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.upi-security-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Quick Actions Grid */
+.upi-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.upi-action-btn {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.upi-action-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  background: var(--surface-2);
+}
+
+.upi-action-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  color: #fff;
+  transition: transform 0.2s ease;
+}
+
+.upi-action-btn:hover .upi-action-icon {
+  transform: scale(1.08);
+}
+
+.upi-action-icon.send {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.upi-action-icon.scan {
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.upi-action-icon.contact {
+  background: linear-gradient(135deg, #10b981, #059669);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.upi-action-icon.history {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.upi-action-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.upi-action-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Contacts Bar / Carousel */
+.upi-contacts-bar {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 8px 4px 14px;
+  scrollbar-width: thin;
+}
+
+.upi-contact-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 74px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.upi-contact-card:hover {
+  transform: translateY(-3px);
+}
+
+.upi-contact-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+  color: #fff;
+  margin-bottom: 6px;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.upi-contact-card:hover .upi-contact-avatar {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+}
+
+.upi-contact-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 74px;
+}
+
+.upi-contact-risk-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--surface-1);
+}
+
+.upi-contact-risk-dot.high { background: var(--danger); }
+.upi-contact-risk-dot.low { background: var(--success); }
+
+/* Recent UPI Timeline */
+.upi-recent-timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.upi-group-header {
+  padding: 10px 20px;
+  background: var(--surface-2);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.upi-group-header:first-child {
+  border-top: none;
+}
+
+.upi-txn-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s ease;
+  cursor: pointer;
+}
+
+.upi-txn-row:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.upi-txn-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.upi-txn-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.upi-txn-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 3px;
+}
+
+.upi-txn-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.upi-txn-right {
+  text-align: right;
+}
+
+.upi-txn-amount {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  margin-bottom: 4px;
+}
+
+.upi-txn-amount.debit { color: var(--text-primary); }
+.upi-txn-amount.credit { color: var(--success); }
+
+/* ── MULTI-STEP CONTAINERS ────────────────────────────── */
+
+.upi-step-panel {
+  max-width: 520px;
+  margin: 0 auto;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  animation: upiFadeIn 0.25s ease;
+}
+
+@keyframes upiFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.upi-step-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.upi-step-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Recipient Search */
+.upi-search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+
+.upi-search-box svg {
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+}
+
+.upi-search-box input {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
+  width: 100%;
+}
+
+.upi-beneficiaries-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.upi-beneficiary-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.upi-beneficiary-item:hover {
+  border-color: var(--accent);
+  background: rgba(59, 130, 246, 0.06);
+  transform: translateX(2px);
+}
+
+.upi-ben-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.upi-ben-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: #fff;
+}
+
+.upi-ben-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.upi-ben-handle {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Selected Recipient Pill */
+.upi-selected-recipient-pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 16px;
+}
+
+.upi-avatar-sm {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.upi-rec-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.upi-rec-handle {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.upi-verified-badge {
+  margin-left: auto;
+  font-size: 11px;
+  color: #22c55e;
+  font-weight: 600;
+  background: rgba(34, 197, 94, 0.12);
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+/* Big Amount Input */
+.upi-amount-input-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px 16px;
+  gap: 8px;
+}
+
+.upi-currency-sign {
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.upi-amount-input-card input {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 48px;
+  font-weight: 800;
+  width: 220px;
+  outline: none;
+  letter-spacing: -1px;
+}
+
+/* Quick Chips */
+.upi-chips-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.upi-chip {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.upi-chip:hover {
+  border-color: var(--accent);
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--accent);
+}
+
+.upi-input-note {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+}
+
+.upi-balance-reminder {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px dashed var(--border);
+}
+
+/* Review Screen */
+.upi-review-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.upi-review-amount-box {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.upi-sub-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.upi-big-amount {
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+  margin: 4px 0;
+}
+
+.upi-fee-tag {
+  font-size: 12px;
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.upi-transfer-parties {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.party-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.party-box.to {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.party-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.party-avatar.recipient {
+  background: linear-gradient(135deg, #10b981, #047857);
+}
+
+.party-role {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.party-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.party-acc {
+  font-size: 11px;
+  font-family: var(--font-mono, monospace);
+  color: var(--text-muted);
+}
+
+.transfer-arrow-icon {
+  padding: 0 10px;
+  color: var(--accent);
+}
+
+.upi-review-details-list {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+
+.rev-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.rev-row:last-child {
+  margin-bottom: 0;
+}
+
+.rev-row .lbl { color: var(--text-secondary); }
+.rev-row .val { font-weight: 600; color: var(--text-primary); }
+
+.upi-security-shield-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.upi-security-shield-note svg {
+  width: 18px;
+  height: 18px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+/* ── UPI PIN MODAL & KEYPAD ───────────────────────────── */
+
+.upi-pin-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.upi-pin-bank-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.upi-pin-bank-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
+}
+
+.upi-pin-amount-pill {
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.upi-pin-instruction {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+
+.upi-pin-dots-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.pin-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pin-dot.filled {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+  transform: scale(1.15);
+}
+
+.pin-dot.error {
+  border-color: var(--danger);
+  background: var(--danger);
+  box-shadow: 0 0 12px var(--danger);
+}
+
+.upi-pin-error {
+  color: var(--danger);
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.upi-pin-demo-hint {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-radius: 10px;
+  padding: 6px 14px;
+  font-size: 11px;
+  color: #93c5fd;
+  margin-bottom: 24px;
+}
+
+.upi-keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 280px;
+}
+
+.keypad-key {
+  height: 54px;
+  border-radius: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.keypad-key:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.04);
+}
+
+.keypad-key:active {
+  transform: scale(0.96);
+}
+
+.keypad-key.action-clear {
+  color: var(--text-muted);
+  font-size: 16px;
+}
+
+.keypad-key.action-backspace {
+  color: var(--text-secondary);
+}
+
+/* ── AI RADAR SCREENING ───────────────────────────────── */
+
+.upi-screening-container {
+  text-align: center;
+  padding: 30px 10px;
+}
+
+.upi-scanner-radar {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+  position: relative;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radar-circle {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.radar-circle.circle-1 { width: 100%; height: 100%; }
+.radar-circle.circle-2 { width: 70%; height: 70%; }
+.radar-circle.circle-3 { width: 40%; height: 40%; }
+
+.radar-sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0deg, rgba(59, 130, 246, 0.4) 60deg, transparent 65deg);
+  animation: radarRotate 2s linear infinite;
+}
+
+@keyframes radarRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.radar-center-icon {
+  position: relative;
+  z-index: 2;
+  animation: pulseIcon 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes pulseIcon {
+  from { transform: scale(0.9); opacity: 0.8; }
+  to { transform: scale(1.1); opacity: 1; }
+}
+
+.upi-screening-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+  max-width: 380px;
+  margin: 0 auto;
+  background: var(--surface-2);
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.check-dot {
+  font-size: 11px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.check-dot.pass {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  font-weight: 700;
+}
+
+.check-dot.spin {
+  animation: spinDot 1s linear infinite;
+  color: var(--accent);
+}
+
+@keyframes spinDot {
+  100% { transform: rotate(360deg); }
+}
+
+/* ── SUCCESS SCREEN ───────────────────────────────────── */
+
+.upi-success-card {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.upi-success-badge-anim {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(34, 197, 94, 0.15);
+  border: 2px solid #22c55e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 0 24px rgba(34, 197, 94, 0.35);
+  animation: successPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes successPop {
+  0% { transform: scale(0.3); opacity: 0; }
+  70% { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.upi-success-badge-anim svg {
+  width: 44px;
+  height: 44px;
+}
+
+.upi-success-header {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.upi-success-amount {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: #22c55e;
+  margin-bottom: 4px;
+}
+
+.upi-success-to {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+
+.upi-receipt-box {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.receipt-row:last-child {
+  border-bottom: none;
+}
+
+.receipt-row .val {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ── HIGH RISK ALERT & STEP-UP ────────────────────────── */
+
+.upi-highrisk-card {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.upi-highrisk-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.15);
+  border: 2px solid var(--danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+}
+
+.upi-risk-pill-high {
+  display: inline-block;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: var(--danger);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.upi-highrisk-amount {
+  font-size: 34px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.upi-highrisk-to {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.upi-risk-score-banner {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.upi-risk-reasons-box {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  text-align: left;
+}
+
+.upi-stepup-notice {
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-radius: 12px;
+  padding: 14px;
+  text-align: left;
+}
+
+/* ── FACE VERIFICATION STEP-UP ────────────────────────── */
+
+.upi-face-stepup-card {
+  text-align: center;
+}
+
+.upi-face-viewport-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.upi-face-viewport {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  border: 3px solid var(--accent);
+  box-shadow: 0 0 24px rgba(59, 130, 246, 0.4);
+  background: #000;
+}
+
+.upi-face-viewport video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.upi-face-viewport canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.upi-face-laser {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #3b82f6, #60a5fa, #3b82f6, transparent);
+  box-shadow: 0 0 10px #3b82f6;
+  animation: laserScan 2.2s ease-in-out infinite alternate;
+}
+
+@keyframes laserScan {
+  0% { top: 10%; }
+  100% { top: 90%; }
+}
+
+.upi-face-reticle {
+  position: absolute;
+  inset: 15px;
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* ── SECURITY AUDIT TIMELINE (TRANSACTION DETAIL) ─────── */
+
+.security-timeline-flow {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-left: 28px;
+}
+
+.security-timeline-flow::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--border);
+}
+
+.sec-tl-step-item {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.sec-tl-step-item:last-child {
+  margin-bottom: 0;
+}
+
+.sec-tl-marker {
+  position: absolute;
+  left: -28px;
+  top: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--surface-1);
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+
+.sec-tl-marker.success {
+  border-color: #22c55e;
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.12);
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
+}
+
+.sec-tl-marker.warning {
+  border-color: #f59e0b;
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.sec-tl-marker.held {
+  border-color: #ef4444;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.sec-tl-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3px;
+}
+
+.sec-tl-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.sec-tl-time {
+  font-size: 11px;
+  font-family: var(--font-mono, monospace);
+  color: var(--text-muted);
+}
+
+.sec-tl-detail {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* ── UPI FLOW SUPPLEMENTAL STYLES (added by UPIPaymentFlow) ─────────────── */
+
+/* Contact pill */
+.upi-contact-pill {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  cursor: pointer; padding: 10px 14px; border-radius: 12px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  transition: all .2s; min-width: 64px; text-align: center;
+}
+.upi-contact-pill:hover { background: var(--surface-3); border-color: var(--accent); transform: translateY(-2px); }
+.upi-contact-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, #3b72ff, #22c55e);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: #fff;
+}
+.upi-contact-name { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
+
+/* Recent items */
+.upi-recent-item {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+  border-bottom: 1px solid var(--border); cursor: pointer; transition: background .15s;
+}
+.upi-recent-item:last-child { border-bottom: none; }
+.upi-recent-item:hover { background: var(--surface-2); }
+.upi-recent-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.upi-recent-info { flex: 1; overflow: hidden; }
+.upi-recent-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.upi-recent-date { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.upi-recent-amt  { font-size: 13px; font-weight: 700; color: var(--danger); flex-shrink: 0; }
+
+/* Beneficiary items */
+.upi-bene-item {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+  border-radius: 10px; cursor: pointer; border: 1px solid transparent;
+  transition: all .15s; margin-bottom: 6px;
+  background: var(--surface-2);
+}
+.upi-bene-item:hover { background: var(--surface-3); border-color: var(--accent); }
+.upi-bene-item.risk-high { border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.05); }
+.upi-bene-item.risk-high:hover { background: rgba(239,68,68,0.1); }
+.upi-bene-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, #3b72ff, #22c55e);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.upi-bene-avatar.danger { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+.upi-bene-info { flex: 1; overflow: hidden; }
+.upi-bene-name  { font-size: 13px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 6px; }
+.upi-bene-upiid { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.upi-bene-arrow { font-size: 20px; color: var(--text-muted); }
+
+/* PIN dot shake animation */
+@keyframes pinShake {
+  0%, 100% { transform: translateX(0); }
+  15%       { transform: translateX(-8px); }
+  30%       { transform: translateX(8px); }
+  45%       { transform: translateX(-6px); }
+  60%       { transform: translateX(6px); }
+  75%       { transform: translateX(-3px); }
+  90%       { transform: translateX(3px); }
+}
+.upi-pin-dots-row.shake { animation: pinShake 0.55s ease; }
+
+/* Decision card */
+.upi-decision-card {
+  text-align: center; padding: 32px 24px;
+  background: var(--bg-card); border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-lg);
+}
+.upi-decision-card.success { border-color: rgba(34,197,94,0.3); }
+.upi-decision-card.failed  { border-color: rgba(239,68,68,0.3); }
+.upi-decision-icon {
+  width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px;
+  display: flex; align-items: center; justify-content: center;
+}
+.upi-decision-icon.success { background: rgba(34,197,94,0.12); color: #22c55e; }
+.upi-decision-icon.danger  { background: rgba(239,68,68,0.12); color: #ef4444; }
+.upi-decision-title  { font-size: 22px; font-weight: 800; margin-bottom: 6px; color: var(--text-primary); }
+.upi-decision-amount { font-size: 36px; font-weight: 900; margin-bottom: 6px; }
+.upi-decision-sub    { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; }
+.upi-decision-meta-box {
+  background: var(--surface-2); border-radius: 10px; padding: 12px 16px;
+  margin-bottom: 20px; text-align: left;
+}
+.upi-decision-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; padding: 5px 0; border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+.upi-decision-row:last-child { border-bottom: none; }
+.upi-decision-row span:last-child { color: var(--text-primary); font-weight: 500; font-size: 12px; text-align: right; }
+.upi-decision-actions { display: flex; flex-direction: column; gap: 0; }
+
+/* mt-10 utility */
+.mt-10 { margin-top: 10px; }
+
+/* Screening check pass/fail */
+.check-item.pass .check-dot { color: var(--success) !important; }
+.check-item.fail .check-dot { color: var(--danger) !important; }

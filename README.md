@@ -72,15 +72,40 @@ VERIFY PHASE (every login or payment authorization):
 
 ---
 
-### 2. 👆 Touch ID (WebAuthn / Passkey Authentication)
+### 2. 📱 Modern UPI-Style Payment Application & Authorization Engine (`upi.js`)
 
-- **OS-level biometric enrollment** — First tap on the fingerprint sensor triggers a platform authenticator system dialog (Face ID on Mac, Windows Hello, Android biometrics)
-- **Per-account credentials** — Stored separately per account (`sl_webauthnCred_USR001`, etc.)
-- **Hardware-backed** — Private keys never leave the device's secure enclave
-- **Simulated fallback** — On unsupported browsers, an animated fingerprint sensor pad with scanning laser and ripple effects provides a seamless demo experience
-- **Step-up authentication** — Automatically triggered for high-value (≥ ₹10,000) or high-risk payments as a second factor
+SecureLedger features an intuitive, high-fidelity **UPI payment application workflow** modeled after modern mobile UPI payment apps (Google Pay / PhonePe / Paytm).
 
----
+> 🚫 **Touch ID Removed**: Touch ID / WebAuthn has been completely removed in favor of a **UPI PIN + Biometric Face ID Step-Up** paradigm.
+
+#### Complete UPI Payment Flow:
+
+```text
+[Select Recipient] → [Enter Amount & Note] → [Review Summary]
+         ↓
+ [Enter UPI Transaction PIN (4/6-Digit)]
+         ↓
+  [AI Fraud Screening Engine (8 Anomaly Signals)]
+         ↓
+ ┌─────────────────────────────────────────────────────────┐
+ │ RISK ASSESSMENT & AUTHORIZATION DECISION                 │
+ ├──────────────────┬──────────────────┬───────────────────┤
+ │ LOW RISK (0–29)  │ MEDIUM (30–69)   │ HIGH RISK (70+)   │
+ │ Direct Success   │ Warning Banner   │ Face ID Required  │
+ │ Receipt Card     │ User Opt-In      │ Biometric Step-Up │
+ └──────────────────┴──────────────────┴───────────────────┘
+                                                 ↓
+                                         [Face Verification]
+                                         Match → Approved ✓
+                                         Fail  → Transaction Blocked 🔒
+```
+
+#### UPI Flow Highlights:
+- **Contact Directory & Fast Select**: Instant search by name, UPI ID (`username@okaxis`), or account number, plus quick contact pills and recent transfer timeline.
+- **Dynamic Amount Selection**: Quick-select chips (₹500, ₹1,000, ₹2,000, ₹5,000) with real-time account balance validation.
+- **Secure UPI PIN Modal**: Custom 4 or 6-digit PIN pad with masked digit indicators, shake animation on error, and PIN verification (`default PIN: 1234`).
+- **Biometric Face ID Step-Up**: Triggered automatically for suspicious or high-risk transfers (or optional biometric verification), demanding a live camera facial match before funds move.
+- **Animated Digital Receipt**: High-fidelity payment receipt card featuring vector success checkmarks, transaction IDs, timestamp, balance after transfer, and direct print/share options.
 
 ### 3. 🗄️ MySQL Relational Database Architecture
 
@@ -275,6 +300,7 @@ All connected browser sessions receive:
 secureLedger/
 ├── index.html              # Single Page Application — 10+ page sections
 ├── styles.css              # Design system: tokens, dark/light modes, animations
+├── upi.js                  # Modern UPI Payment flow engine (PIN pad, Step-up Face ID, Receipts)
 ├── app.js                  # Main frontend controller: 3D graph, charts, biometrics, accounts
 ├── api.js                  # Client-side API bridge with offline fallback methods
 ├── data.js                 # Static seed datasets and baseline schema definitions

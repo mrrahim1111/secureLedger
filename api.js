@@ -107,6 +107,50 @@ const API = {
   },
 
   /**
+   * Cryptographically verify UPI PIN with backend
+   */
+  async verifyPin(accountId, pinHash) {
+    if (this.isBackendConnected) {
+      try {
+        const res = await fetch(`${this.baseUrl}/api/auth/verify-pin`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ accountId, pinHash })
+        });
+        const data = await res.json();
+        return data;
+      } catch (err) {
+        console.warn('API verifyPin fallback:', err);
+      }
+    }
+    // Standalone fallback: default PIN 123456 hash
+    const expected = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92';
+    if (pinHash === expected) {
+      return { success: true, message: 'UPI PIN verified successfully' };
+    }
+    return { success: false, attemptsLeft: 2, message: 'Incorrect UPI PIN' };
+  },
+
+  /**
+   * Update UPI PIN
+   */
+  async setPin(accountId, pinHash) {
+    if (this.isBackendConnected) {
+      try {
+        const res = await fetch(`${this.baseUrl}/api/auth/set-pin`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ accountId, pinHash })
+        });
+        return await res.json();
+      } catch (err) {
+        console.warn('API setPin fallback:', err);
+      }
+    }
+    return { success: true };
+  },
+
+  /**
    * Cryptographic biometric verification challenge
    */
   async verifyBiometric(type = 'face', passkeyCredential = null) {

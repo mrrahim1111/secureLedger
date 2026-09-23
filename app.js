@@ -931,32 +931,11 @@ class SecureLedgerApp {
 
   // ── BIOMETRIC AUTHENTICATION & FACE RECOGNITION ──
   setupBiometrics() {
-    const faceBtn  = document.getElementById('login-face-btn');
-    const touchBtn = document.getElementById('login-touch-btn');
+    const faceBtn = document.getElementById('login-face-btn');
 
     if (faceBtn) {
       faceBtn.addEventListener('click', () => {
         this.launchBiometric('face', 'login', (accountId) => this.login(true, accountId));
-      });
-    }
-
-    if (touchBtn) {
-      touchBtn.addEventListener('click', async () => {
-        const accountId = this.selectedAccountId;
-        // Try per-account WebAuthn credential first
-        if (window.FaceRec && window.FaceRec.hasWebAuthnCred(accountId)) {
-          const result = await window.FaceRec.verifyWebAuthn(accountId);
-          if (result.success) {
-            this.showToast(`✓ Touch ID verified for ${this.ACCOUNTS[accountId].name}`, 'success');
-            this.login(true, accountId);
-            return;
-          } else if (result.reason === 'cancelled') {
-            this.showToast('Touch ID cancelled.', 'info');
-            return;
-          }
-        }
-        // Fallback: show fingerprint modal
-        this.launchBiometric('touch', 'login', (id) => this.login(true, id));
       });
     }
 
@@ -1335,16 +1314,14 @@ class SecureLedgerApp {
     }
   }
 
-  renderBiometricUI(type) {
+  renderBiometricUI(type = 'face') {
     const title      = document.getElementById('bio-modal-title');
     const sub        = document.getElementById('bio-modal-sub');
-    const switchBtn  = document.getElementById('bio-switch-btn');
     const badge      = document.getElementById('bio-status-badge');
     const statusText = document.getElementById('bio-status-text');
     const stepDetail = document.getElementById('bio-step-detail');
     const canvas     = document.getElementById('bio-canvas-overlay');
     const laser      = document.getElementById('bio-laser-beam');
-    const fpPad      = document.getElementById('bio-fingerprint-pad');
     const viewport   = document.getElementById('bio-scanner-viewport');
     const enrollPrmt = document.getElementById('bio-enroll-prompt');
     const confWrap   = document.getElementById('bio-confidence-wrap');
@@ -1359,38 +1336,20 @@ class SecureLedgerApp {
     const account = this.ACCOUNTS[this.selectedAccountId] || this.ACCOUNTS['USR001'];
     const reenrollBtn = document.getElementById('bio-reenroll-btn');
 
-    if (type === 'face') {
-      const isEnrolled = window.FaceRec && window.FaceRec.isEnrolled(this.selectedAccountId);
-      if (reenrollBtn) reenrollBtn.style.display = isEnrolled ? 'inline-block' : 'none';
+    const isEnrolled = window.FaceRec && window.FaceRec.isEnrolled(this.selectedAccountId);
+    if (reenrollBtn) reenrollBtn.style.display = isEnrolled ? 'inline-block' : 'none';
 
-      const purposeLabel = this.bioPurpose === 'calibrate' ? 'Calibrate Face' :
-                           this.bioPurpose === 'payment'   ? `Authorize Payment — ${account.name}` :
-                                                             `Face ID — ${account.name}`;
-      title.textContent = purposeLabel;
-      sub.textContent   = 'Look directly into the camera';
-      switchBtn.textContent = 'Switch to Touch ID';
-      fpPad.style.display   = 'none';
-      canvas.style.display  = 'block';
-      laser.style.display   = 'block';
-      statusText.textContent = 'Initializing...';
-      stepDetail.textContent = 'Loading AI face recognition models...';
+    const purposeLabel = this.bioPurpose === 'calibrate' ? 'Calibrate Face' :
+                         this.bioPurpose === 'payment'   ? `Authorize Payment — ${account.name}` :
+                                                           `Face ID — ${account.name}`;
+    title.textContent = purposeLabel;
+    sub.textContent   = 'Look directly into the camera';
+    if (canvas) canvas.style.display  = 'block';
+    if (laser) laser.style.display   = 'block';
+    statusText.textContent = 'Initializing...';
+    stepDetail.textContent = 'Loading AI face recognition models...';
 
-      this.startFaceCamera();
-    } else {
-      if (reenrollBtn) reenrollBtn.style.display = 'none';
-      const purposeLabel = this.bioPurpose === 'calibrate' ? 'Enroll Touch ID' :
-                           this.bioPurpose === 'payment'   ? `Authorize Payment — ${account.name}` :
-                                                             `Touch ID — ${account.name}`;
-      title.textContent = purposeLabel;
-      sub.textContent   = 'Place finger on the biometric sensor';
-      switchBtn.textContent = 'Switch to Face ID';
-      this.stopFaceCamera();
-      canvas.style.display = 'none';
-      laser.style.display  = 'none';
-      fpPad.style.display  = 'flex';
-      statusText.textContent = 'Touch Sensor Ready';
-      stepDetail.textContent = 'Click or tap sensor to scan fingerprint...';
-    }
+    this.startFaceCamera();
   }
 
   async startFaceCamera() {
@@ -1564,86 +1523,6 @@ class SecureLedgerApp {
         }
       }
     );
-  }
-
-  async processFingerprintTap() {
-    const accountId = this.selectedAccountId;
-    const account   = this.ACCOUNTS[accountId];
-    const statusText = document.getElementById('bio-status-text');
-    const stepDetail = document.getElementById('bio-step-detail');
-    const badge      = document.getElementById('bio-status-badge');
-    const viewport   = document.getElementById('bio-scanner-viewport');
-
-    statusText.textContent = 'Scanning Fingerprint...';
-    stepDetail.textContent = 'Connecting to hardware Touch ID sensor...';
-
-    // Try enrolling or verifying WebAuthn passkey for this account
-    if (window.FaceRec && !window.FaceRec.hasWebAuthnCred(accountId)) {
-      // First time — enroll this account's Touch ID credential
-      statusText.textContent = 'Enrolling Touch ID...';
-      stepDetail.textContent = 'Complete the system biometric prompt...';
-      const result = await window.FaceRec.enrollWebAuthn(accountId, account.name, account.name + ' — SecureLedger');
-      if (!result.success) {
-        if (result.reason === 'cancelled') {
-          statusText.textContent = 'Cancelled';
-          stepDetail.textContent = 'Touch ID enrollment was cancelled';
-        } else {
-          // Fallback simulation for unsupported environments
-          this._simulateFingerprintSuccess(account, badge, viewport, statusText, stepDetail);
-        }
-        return;
-      }
-      statusText.textContent = '✓ Touch ID Enrolled';
-      stepDetail.textContent = `${account.name}'s fingerprint linked to this account`;
-    } else if (window.FaceRec && window.FaceRec.hasWebAuthnCred(accountId)) {
-      // Verify existing credential
-      statusText.textContent = 'Verifying with Touch ID...';
-      stepDetail.textContent = 'Complete the system biometric prompt...';
-      const result = await window.FaceRec.verifyWebAuthn(accountId);
-      if (!result.success) {
-        if (result.reason === 'cancelled') {
-          statusText.textContent = 'Cancelled';
-          stepDetail.textContent = 'Touch ID verification cancelled';
-          return;
-        }
-        // Fallback
-        this._simulateFingerprintSuccess(account, badge, viewport, statusText, stepDetail);
-        return;
-      }
-    } else {
-      this._simulateFingerprintSuccess(account, badge, viewport, statusText, stepDetail);
-      return;
-    }
-
-    badge.classList.add('verified');
-    viewport.classList.add('verified');
-    statusText.textContent = '✓ Fingerprint Verified';
-    stepDetail.textContent = `Touch ID matched Secure Enclave — ${account.name}`;
-
-    setTimeout(() => {
-      this.closeBiometricModal();
-      if (this.bioSuccessCallback) {
-        this.bioSuccessCallback(accountId);
-      } else {
-        this.showToast(`✓ Touch ID Verified — ${account.name}`, 'success');
-      }
-    }, 700);
-  }
-
-  _simulateFingerprintSuccess(account, badge, viewport, statusText, stepDetail) {
-    // Graceful fallback for environments without WebAuthn platform authenticator
-    statusText.textContent = 'Reading biometric signature...';
-    stepDetail.textContent = 'Extracting minutiae points...';
-    setTimeout(() => {
-      badge.classList.add('verified');
-      viewport.classList.add('verified');
-      statusText.textContent = '✓ Fingerprint Verified';
-      stepDetail.textContent = `Touch ID matched Secure Enclave — ${account.name}`;
-      setTimeout(() => {
-        this.closeBiometricModal();
-        if (this.bioSuccessCallback) this.bioSuccessCallback(this.selectedAccountId);
-      }, 700);
-    }, 1200);
   }
 
   stopFaceCamera() {
@@ -1907,158 +1786,26 @@ class SecureLedgerApp {
     document.getElementById('node-detail-panel').style.display = 'block';
   }
 
-  // ── PAYMENT FLOW ───────────────────────────────
+  // ── UPI PAYMENT ENGINE & WORKFLOW ORCHESTRATOR ──
   setupPaymentFlow() {
-    const reviewBtn = document.getElementById('review-payment-btn');
-    const confirmBtn = document.getElementById('confirm-payment-btn');
-    const cancelBtn  = document.getElementById('cancel-payment-btn');
-    const cancelTxBtn = document.getElementById('cancel-transaction-btn');
-    const reviewAgainBtn = document.getElementById('review-btn');
-
-    if (reviewBtn) {
-      reviewBtn.addEventListener('click', () => this.reviewPayment());
-    }
-
-    if (confirmBtn) {
-      confirmBtn.addEventListener('click', () => this.confirmPayment());
-    }
-
-    if (cancelBtn) {
-      cancelBtn.addEventListener('click', () => {
-        document.getElementById('payment-review').style.display = 'none';
-        document.getElementById('payment-form-section').style.display = 'block';
-      });
-    }
-
-    if (cancelTxBtn) {
-      cancelTxBtn.addEventListener('click', () => {
-        document.getElementById('screening-overlay').classList.remove('active');
-        document.getElementById('payment-review').style.display = 'none';
-        document.getElementById('payment-form-section').style.display = 'block';
-        document.getElementById('payment-success').style.display = 'none';
-        this.showToast('Transaction cancelled.', 'info');
-      });
-    }
-
-    if (reviewAgainBtn) {
-      reviewAgainBtn.addEventListener('click', () => {
-        document.getElementById('payment-success').style.display = 'none';
-        document.getElementById('payment-form-section').style.display = 'block';
-      });
-    }
-
-    // Amount input dynamic display
-    const amountInput = document.getElementById('pay-amount');
-    if (amountInput) {
-      amountInput.addEventListener('input', () => {
-        const val = parseInt(amountInput.value) || 0;
-        document.getElementById('pay-amount-display').textContent = '₹' + val.toLocaleString('en-IN');
-      });
-    }
+    this.upi = new UPIPaymentFlow(this);
+    this.upi.init();
   }
 
-  reviewPayment() {
-    const receiver = document.getElementById('pay-to').value;
-    const amount   = parseInt(document.getElementById('pay-amount').value) || 0;
-    const desc     = document.getElementById('pay-desc').value;
-
-    if (!receiver || !amount) {
-      this.showToast('Please fill in all fields.', 'warning');
+  async promptChangePin() {
+    const newPin = prompt('Enter a new 4 to 6-digit UPI Transaction PIN:');
+    if (!newPin) return;
+    if (!/^\d{4,6}$/.test(newPin)) {
+      this.showToast('PIN must be 4 to 6 numeric digits.', 'warning');
       return;
     }
-
-    this.paymentReceiver = receiver;
-    this.paymentAmount   = amount;
-
-    // Populate review screen
-    document.getElementById('review-amount').textContent = '₹' + amount.toLocaleString('en-IN');
-    document.getElementById('review-from').textContent = APP_DATA.currentUser.name;
-    document.getElementById('review-to').textContent   = receiver;
-    document.getElementById('review-desc').textContent = desc || '—';
-
-    document.getElementById('payment-form-section').style.display = 'none';
-    document.getElementById('payment-review').style.display = 'block';
-    document.getElementById('payment-success').style.display  = 'none';
-  }
-
-  confirmPayment() {
-    const isHighSecurity = this.paymentAmount >= 10000 || this.paymentReceiver === 'Unknown Account' || this.paymentReceiver === 'High-Risk Account';
-
-    const executeScreening = () => {
-      runFraudScreening(this.paymentAmount, this.paymentReceiver, async (riskLevel, riskScore) => {
-        // Asynchronously register transaction with backend / local store
-        const desc = document.getElementById('pay-desc')?.value || '';
-        const paymentResult = await API.sendPayment({
-          receiverName: this.paymentReceiver,
-          amount: this.paymentAmount,
-          description: desc
-        });
-
-        if (paymentResult && paymentResult.transaction) {
-          if (!APP_DATA.transactions.some(t => t.id === paymentResult.transaction.id)) {
-            APP_DATA.transactions.unshift(paymentResult.transaction);
-          }
-        }
-
-        if (riskLevel === 'high') {
-          // Navigate to fraud alert
-          document.getElementById('payment-review').style.display = 'none';
-          this.showFraudAlert(riskScore);
-          if (typeof this.renderAlerts === 'function') this.renderAlerts();
-        } else {
-          // Deduct local balance and update UI
-          APP_DATA.currentUser.balance = Math.max(0, APP_DATA.currentUser.balance - this.paymentAmount);
-          const balFormatted = '₹' + APP_DATA.currentUser.balance.toLocaleString('en-IN');
-          const statBal = document.getElementById('stat-available-balance');
-          if (statBal) statBal.textContent = balFormatted;
-          const payBal = document.getElementById('pay-available-balance');
-          if (payBal) payBal.textContent = balFormatted;
-
-          // Success UI
-          document.getElementById('payment-review').style.display = 'none';
-          document.getElementById('payment-success').style.display = 'block';
-          document.getElementById('success-amount').textContent = '₹' + this.paymentAmount.toLocaleString('en-IN');
-          document.getElementById('success-to').textContent = this.paymentReceiver;
-          document.getElementById('success-txnid').textContent = (paymentResult && paymentResult.transaction && paymentResult.transaction.id) || ('TXN' + Date.now().toString().slice(-6));
-          document.getElementById('success-risk').textContent = riskScore + '/100 — ' + riskLevel.toUpperCase() + ' RISK';
-          document.getElementById('success-risk').style.color =
-            riskLevel === 'medium' ? 'var(--warning)' : 'var(--success)';
-        }
-
-        if (typeof this.renderTransactionTable === 'function') {
-          this.renderTransactionTable();
-        }
-      });
-    };
-
-    if (isHighSecurity) {
-      this.launchBiometric('face', 'payment', executeScreening);
+    const pinHash = await this.upi.hashPin(newPin);
+    const res = await API.setPin(this.currentUser.id, pinHash);
+    if (res && res.success) {
+      this.showToast('✓ UPI Transaction PIN updated successfully', 'success');
     } else {
-      executeScreening();
+      this.showToast('Failed to update UPI PIN', 'danger');
     }
-  }
-
-  showFraudAlert(riskScore) {
-    // Show inline alert on payment page
-    document.getElementById('payment-form-section').style.display = 'none';
-    document.getElementById('payment-review').style.display = 'none';
-    document.getElementById('payment-success').style.display = 'none';
-    document.getElementById('fraud-alert-inline').style.display = 'block';
-    document.getElementById('fraud-alert-amount').textContent = '₹' + this.paymentAmount.toLocaleString('en-IN');
-    document.getElementById('fraud-alert-to').textContent = this.paymentReceiver;
-    document.getElementById('fraud-alert-score').textContent = riskScore + '/100';
-
-    document.getElementById('fraud-cancel-payment-btn').onclick = () => {
-      document.getElementById('fraud-alert-inline').style.display = 'none';
-      document.getElementById('payment-form-section').style.display = 'block';
-      this.showToast('Transaction cancelled for your safety.', 'success');
-    };
-
-    document.getElementById('fraud-review-btn').onclick = () => {
-      document.getElementById('fraud-alert-inline').style.display = 'none';
-      document.getElementById('payment-form-section').style.display = 'block';
-      this.navigateTo('alerts');
-    };
   }
 
   // ── TRANSACTION TABLE ─────────────────────────

@@ -25,7 +25,8 @@
         "expiry": "08/29",
         "type": "Visa Platinum"
       },
-      "createdAt": "2024-01-15T00:00:00.000Z"
+      "createdAt": "2024-01-15T00:00:00.000Z",
+      "pinHash": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"
     },
     {
       "id": "USR002",
@@ -52,7 +53,8 @@
         "expiry": "11/30",
         "type": "Mastercard World"
       },
-      "createdAt": "2024-02-10T00:00:00.000Z"
+      "createdAt": "2024-02-10T00:00:00.000Z",
+      "pinHash": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"
     },
     {
       "id": "USR003",
@@ -79,7 +81,8 @@
         "expiry": "03/28",
         "type": "Visa Platinum"
       },
-      "createdAt": "2024-03-01T00:00:00.000Z"
+      "createdAt": "2024-03-01T00:00:00.000Z",
+      "pinHash": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"
     }
   ],
   "currentUser": {
@@ -94,12 +97,13 @@
     "kycStatus": "verified",
     "accountNumber": "SLAC000001",
     "ifsc": "SLB0001234",
-    "balance": 48350,
+    "balance": 46839,
     "creditScore": 785,
     "riskProfile": "Low",
     "biometricsEnrolled": true,
     "faceEnrolled": true,
-    "touchEnrolled": true
+    "touchEnrolled": true,
+    "pinHash": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"
   },
   "users": [
     {
@@ -120,7 +124,7 @@
       "name": "Arjun Sharma",
       "avatar": "AS",
       "accountId": "SLAC000002",
-      "balance": 34200,
+      "balance": 35700,
       "risk": "low",
       "riskScore": 10,
       "location": "Hyderabad",
@@ -198,7 +202,7 @@
       "name": "Netflix India",
       "avatar": "NF",
       "accountId": "SLAC000009",
-      "balance": 3400000,
+      "balance": 3400011,
       "risk": "low",
       "riskScore": 4,
       "location": "Mumbai",
@@ -286,6 +290,193 @@
     }
   ],
   "transactions": [
+    {
+      "id": "TXN1018",
+      "date": "2026-09-23",
+      "time": "09:31 PM",
+      "sender": "Rahim",
+      "senderAcc": "SLAC000001",
+      "receiver": "Arjun Sharma",
+      "receiverAcc": "SLAC000002",
+      "amount": 500,
+      "type": "Debit",
+      "category": "Transfer",
+      "risk": "low",
+      "riskScore": 5,
+      "status": "Completed",
+      "location": "Kakinada",
+      "device": "iPhone 15 Pro",
+      "method": "UPI Instant",
+      "note": "",
+      "reasons": [
+        "Transaction matches established behavioral baseline and trusted device parameters"
+      ],
+      "pinVerified": true,
+      "faceVerified": false,
+      "stepUpRequired": false,
+      "securityTimeline": [
+        {
+          "step": 1,
+          "title": "Transaction Initiated",
+          "detail": "Transfer of ₹500 to Arjun Sharma",
+          "timestamp": "2026-09-23 09:31 PM",
+          "status": "success"
+        },
+        {
+          "step": 2,
+          "title": "UPI PIN Verification",
+          "detail": "6-digit UPI PIN cryptographically authorized",
+          "timestamp": "2026-09-23 09:31 PM",
+          "status": "success"
+        },
+        {
+          "step": 3,
+          "title": "AI Fraud Screening",
+          "detail": "AI Risk Score: 5/100 (LOW RISK) — 1 risk factor(s)",
+          "timestamp": "2026-09-23 09:31 PM",
+          "status": "success"
+        },
+        {
+          "step": 4,
+          "title": "Ledger Settlement Complete",
+          "detail": "Atomic double-entry ledger balance updated. Payment successful.",
+          "timestamp": "2026-09-23 09:31 PM",
+          "status": "success"
+        }
+      ]
+    },
+    {
+      "id": "TXN1017",
+      "date": "2026-09-23",
+      "time": "09:30 PM",
+      "sender": "Rahim",
+      "senderAcc": "SLAC000001",
+      "receiver": "Arjun Sharma",
+      "receiverAcc": "SLAC000002",
+      "amount": 500,
+      "type": "Debit",
+      "category": "Transfer",
+      "risk": "low",
+      "riskScore": 5,
+      "status": "Completed",
+      "location": "Kakinada",
+      "device": "iPhone 15 Pro",
+      "method": "UPI Instant",
+      "note": "",
+      "reasons": [
+        "Transaction matches established behavioral baseline and trusted device parameters"
+      ],
+      "pinVerified": true,
+      "faceVerified": false,
+      "stepUpRequired": false,
+      "securityTimeline": [
+        {
+          "step": 1,
+          "title": "Transaction Initiated",
+          "detail": "Transfer of ₹500 to Arjun Sharma",
+          "timestamp": "2026-09-23 09:30 PM",
+          "status": "success"
+        },
+        {
+          "step": 2,
+          "title": "UPI PIN Verification",
+          "detail": "6-digit UPI PIN cryptographically authorized",
+          "timestamp": "2026-09-23 09:30 PM",
+          "status": "success"
+        },
+        {
+          "step": 3,
+          "title": "AI Fraud Screening",
+          "detail": "AI Risk Score: 5/100 (LOW RISK) — 1 risk factor(s)",
+          "timestamp": "2026-09-23 09:30 PM",
+          "status": "success"
+        },
+        {
+          "step": 4,
+          "title": "Ledger Settlement Complete",
+          "detail": "Atomic double-entry ledger balance updated. Payment successful.",
+          "timestamp": "2026-09-23 09:30 PM",
+          "status": "success"
+        }
+      ]
+    },
+    {
+      "id": "TXN1016",
+      "date": "2026-09-23",
+      "time": "09:27 PM",
+      "sender": "Rahim",
+      "senderAcc": "SLAC000001",
+      "receiver": "Arjun Sharma",
+      "receiverAcc": "SLAC000002",
+      "amount": 500,
+      "type": "Debit",
+      "category": "Transfer",
+      "risk": "low",
+      "riskScore": 5,
+      "status": "Completed",
+      "location": "Kakinada",
+      "device": "iPhone 15 Pro",
+      "method": "UPI Instant",
+      "note": "Test payment",
+      "reasons": [
+        "Transaction matches established behavioral baseline and trusted device parameters"
+      ],
+      "pinVerified": true,
+      "faceVerified": false,
+      "stepUpRequired": false,
+      "securityTimeline": [
+        {
+          "step": 1,
+          "title": "Transaction Initiated",
+          "detail": "Transfer of ₹500 to Arjun Sharma",
+          "timestamp": "2026-09-23 09:27 PM",
+          "status": "success"
+        },
+        {
+          "step": 2,
+          "title": "UPI PIN Verification",
+          "detail": "6-digit UPI PIN cryptographically authorized",
+          "timestamp": "2026-09-23 09:27 PM",
+          "status": "success"
+        },
+        {
+          "step": 3,
+          "title": "AI Fraud Screening",
+          "detail": "AI Risk Score: 5/100 (LOW RISK) — 1 risk factor(s)",
+          "timestamp": "2026-09-23 09:27 PM",
+          "status": "success"
+        },
+        {
+          "step": 4,
+          "title": "Ledger Settlement Complete",
+          "detail": "Atomic double-entry ledger balance updated. Payment successful.",
+          "timestamp": "2026-09-23 09:27 PM",
+          "status": "success"
+        }
+      ]
+    },
+    {
+      "id": "TXN1015",
+      "date": "2026-09-23",
+      "time": "08:33 PM",
+      "sender": "Rahim",
+      "senderAcc": "SLAC000001",
+      "receiver": "Netflix India",
+      "receiverAcc": "SLAC000009",
+      "amount": 11,
+      "type": "Debit",
+      "category": "Transfer",
+      "risk": "low",
+      "riskScore": 5,
+      "status": "Completed",
+      "location": "Kakinada",
+      "device": "iPhone 15 Pro",
+      "method": "UPI Instant (GPay)",
+      "note": "",
+      "reasons": [
+        "Transaction matches established behavioral baseline and trusted device parameters"
+      ]
+    },
     {
       "id": "TXN1014",
       "date": "2026-09-23",
@@ -794,6 +985,70 @@
       "type": "CREDIT",
       "amount": 35000,
       "date": "2026-09-23"
+    },
+    {
+      "id": "JE-TXN1015-1",
+      "txnId": "TXN1015",
+      "account": "SLAC000001",
+      "type": "DEBIT",
+      "amount": 11,
+      "date": "2026-09-23"
+    },
+    {
+      "id": "JE-TXN1015-2",
+      "txnId": "TXN1015",
+      "account": "SLAC000009",
+      "type": "CREDIT",
+      "amount": 11,
+      "date": "2026-09-23"
+    },
+    {
+      "id": "JE-TXN1016-1",
+      "txnId": "TXN1016",
+      "account": "SLAC000001",
+      "type": "DEBIT",
+      "amount": 500,
+      "date": "2026-09-23"
+    },
+    {
+      "id": "JE-TXN1016-2",
+      "txnId": "TXN1016",
+      "account": "SLAC000002",
+      "type": "CREDIT",
+      "amount": 500,
+      "date": "2026-09-23"
+    },
+    {
+      "id": "JE-TXN1017-1",
+      "txnId": "TXN1017",
+      "account": "SLAC000001",
+      "type": "DEBIT",
+      "amount": 500,
+      "date": "2026-09-23"
+    },
+    {
+      "id": "JE-TXN1017-2",
+      "txnId": "TXN1017",
+      "account": "SLAC000002",
+      "type": "CREDIT",
+      "amount": 500,
+      "date": "2026-09-23"
+    },
+    {
+      "id": "JE-TXN1018-1",
+      "txnId": "TXN1018",
+      "account": "SLAC000001",
+      "type": "DEBIT",
+      "amount": 500,
+      "date": "2026-09-23"
+    },
+    {
+      "id": "JE-TXN1018-2",
+      "txnId": "TXN1018",
+      "account": "SLAC000002",
+      "type": "CREDIT",
+      "amount": 500,
+      "date": "2026-09-23"
     }
   ],
   "alerts": [
@@ -1019,5 +1274,5 @@
       "id": "TXN1013"
     }
   ],
-  "updatedAt": "2026-09-23T14:43:29.984Z"
+  "updatedAt": "2026-09-23T16:01:13.897Z"
 }

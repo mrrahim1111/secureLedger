@@ -28,6 +28,10 @@ class LedgerDatabase {
     // Connect to MySQL pool (auto-fallback if offline)
     mysqlClient.init().catch(err => console.warn('[MySQL] Init notice:', err.message));
 
+    // Rate limiting map for UPI PIN attempts
+    this.pinAttempts = new Map();
+    const DEFAULT_PIN_HASH = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92'; // sha256 of 123456
+
     // Default Demo & Realistic Accounts
     this.accounts = [
       {
@@ -48,7 +52,7 @@ class LedgerDatabase {
         kycStatus: 'verified',
         isDemo: true,
         faceEnrolled: true,
-        touchEnrolled: true,
+        pinHash: DEFAULT_PIN_HASH,
         card: { number: '4532 •••• •••• 8921', holder: 'RAHIM', expiry: '08/29', type: 'Visa Platinum' },
         createdAt: '2024-01-15T00:00:00.000Z'
       },
@@ -70,7 +74,7 @@ class LedgerDatabase {
         kycStatus: 'verified',
         isDemo: true,
         faceEnrolled: false,
-        touchEnrolled: true,
+        pinHash: DEFAULT_PIN_HASH,
         card: { number: '5241 •••• •••• 3145', holder: 'ARJUN SHARMA', expiry: '11/30', type: 'Mastercard World' },
         createdAt: '2024-02-10T00:00:00.000Z'
       },
@@ -92,7 +96,7 @@ class LedgerDatabase {
         kycStatus: 'verified',
         isDemo: false,
         faceEnrolled: false,
-        touchEnrolled: false,
+        pinHash: DEFAULT_PIN_HASH,
         card: { number: '4111 •••• •••• 5820', holder: 'PRIYA NAIR', expiry: '03/28', type: 'Visa Platinum' },
         createdAt: '2024-03-01T00:00:00.000Z'
       }
@@ -182,9 +186,17 @@ class LedgerDatabase {
         const raw = fs.readFileSync(STORE_PATH, 'utf8');
         const parsed = JSON.parse(raw);
         if (parsed.accounts && Array.isArray(parsed.accounts) && parsed.accounts.length) {
-          this.accounts = parsed.accounts;
+          this.accounts = parsed.accounts.map(acc => ({
+            ...acc,
+            pinHash: acc.pinHash || DEFAULT_PIN_HASH
+          }));
         }
-        if (parsed.currentUser) this.currentUser = parsed.currentUser;
+        if (parsed.currentUser) {
+          this.currentUser = {
+            ...parsed.currentUser,
+            pinHash: parsed.currentUser.pinHash || DEFAULT_PIN_HASH
+          };
+        }
         if (parsed.users && parsed.users.length) this.users = parsed.users;
         if (parsed.transactions && parsed.transactions.length) this.transactions = parsed.transactions;
         if (parsed.journalEntries && parsed.journalEntries.length) this.journalEntries = parsed.journalEntries;
@@ -222,7 +234,16 @@ class LedgerDatabase {
    * Processes a transaction atomically with double-entry ledger entries
    */
   processTransaction(payload) {
-    const { receiverName, amount, description = '', device = 'iPhone 15 Pro', location = 'Kakinada' } = payload;
+    const {
+      receiverName,
+      amount,
+      description = '',
+      device = 'iPhone 15 Pro',
+      location = 'Kakinada',
+      pinVerified = true,
+      faceVerified = false,
+      stepUpRequired = false
+    } = payload;
     const numAmount = parseInt(amount, 10);
 
     if (isNaN(numAmount) || numAmount <= 0) {
@@ -256,7 +277,9 @@ class LedgerDatabase {
     const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     const isHighRisk = riskEval.level === 'high';
-    const status = isHighRisk ? 'Review' : 'Completed';
+    // If high-risk but face verification successfully completed, allow completion
+    const status = (isHighRisk && !faceVerified) ? 'Review' : 'Completed';
+    const methodStr = faceVerified ? 'UPI Instant (Face Verified Step-Up)' : 'UPI Instant';
 
     // 1. Create Transaction Record
     const newTxn = {
@@ -275,15 +298,66 @@ class LedgerDatabase {
       status: status,
       location: location,
       device: device,
-      method: 'UPI Instant (GPay)',
+      method: methodStr,
       note: description,
-      reasons: riskEval.reasons
+      reasons: riskEval.reasons,
+      pinVerified: !!pinVerified,
+      faceVerified: !!faceVerified,
+      stepUpRequired: isHighRisk || stepUpRequired
     };
 
+    // Build Detailed Security Audit Timeline
+    const timeline = [
+      {
+        step: 1,
+        title: 'Transaction Initiated',
+        detail: `Transfer of ₹${numAmount.toLocaleString('en-IN')} to ${receiver.name}`,
+        timestamp: `${dateStr} ${timeStr}`,
+        status: 'success'
+      },
+      {
+        step: 2,
+        title: 'UPI PIN Verification',
+        detail: pinVerified ? '6-digit UPI PIN cryptographically authorized' : 'PIN Authorized',
+        timestamp: `${dateStr} ${timeStr}`,
+        status: 'success'
+      },
+      {
+        step: 3,
+        title: 'AI Fraud Screening',
+        detail: `AI Risk Score: ${riskEval.score}/100 (${riskEval.level.toUpperCase()} RISK) — ${riskEval.reasons.length} risk factor(s)`,
+        timestamp: `${dateStr} ${timeStr}`,
+        status: isHighRisk ? 'warning' : 'success'
+      }
+    ];
+
+    if (isHighRisk || stepUpRequired) {
+      timeline.push({
+        step: 4,
+        title: 'Biometric Step-Up Verification',
+        detail: faceVerified
+          ? 'Live Face ID verification successful. Identity verified against neural profile.'
+          : 'High risk detected: Step-up Face ID verification required.',
+        timestamp: `${dateStr} ${timeStr}`,
+        status: faceVerified ? 'success' : 'held'
+      });
+    }
+
+    timeline.push({
+      step: (isHighRisk || stepUpRequired) ? 5 : 4,
+      title: (isHighRisk && !faceVerified) ? 'Security Hold & Flagged for Review' : 'Ledger Settlement Complete',
+      detail: (isHighRisk && !faceVerified)
+        ? 'Transaction flagged by AI engine and held pending compliance investigation.'
+        : 'Atomic double-entry ledger balance updated. Payment successful.',
+      timestamp: `${dateStr} ${timeStr}`,
+      status: (isHighRisk && !faceVerified) ? 'held' : 'success'
+    });
+
+    newTxn.securityTimeline = timeline;
     this.transactions.unshift(newTxn);
 
     // 2. Atomic Double-Entry Ledger Bookkeeping
-    if (!isHighRisk) {
+    if (status === 'Completed') {
       this.currentUser.balance -= numAmount;
       const targetUser = this.users.find(u => u.name === receiver.name);
       if (targetUser) targetUser.balance += numAmount;
@@ -457,7 +531,7 @@ class LedgerDatabase {
       kycStatus: 'verified',
       isDemo: false,
       faceEnrolled: false,
-      touchEnrolled: false,
+      pinHash: data.pinHash || '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92',
       card,
       createdAt: new Date().toISOString()
     };
@@ -561,6 +635,69 @@ class LedgerDatabase {
     this.currentUser = { ...acc };
     this._saveToDisk();
     return this.currentUser;
+  }
+
+  // ── UPI PIN SECURITY & VERIFICATION ───────────────────────
+
+  verifyPin(accountId, pinHash) {
+    const account = this.accounts.find(a => a.id === accountId);
+    if (!account) {
+      throw new Error('Account not found');
+    }
+
+    const now = Date.now();
+    const attempts = this.pinAttempts.get(accountId) || { count: 0, lockoutUntil: 0 };
+
+    if (attempts.lockoutUntil > now) {
+      const remainingSec = Math.ceil((attempts.lockoutUntil - now) / 1000);
+      return {
+        success: false,
+        locked: true,
+        remainingSec,
+        message: `Account locked due to consecutive incorrect PIN attempts. Try again in ${remainingSec}s.`
+      };
+    }
+
+    const expectedHash = account.pinHash || '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92';
+
+    if (pinHash === expectedHash) {
+      this.pinAttempts.delete(accountId);
+      return { success: true, message: 'UPI PIN verified successfully' };
+    } else {
+      attempts.count = (attempts.count || 0) + 1;
+      if (attempts.count >= 3) {
+        attempts.lockoutUntil = now + 30000; // 30-second lockout
+        attempts.count = 0;
+        this.pinAttempts.set(accountId, attempts);
+        return {
+          success: false,
+          locked: true,
+          remainingSec: 30,
+          attemptsLeft: 0,
+          message: 'Too many incorrect attempts. Locked for 30 seconds for security.'
+        };
+      } else {
+        const attemptsLeft = 3 - attempts.count;
+        this.pinAttempts.set(accountId, attempts);
+        return {
+          success: false,
+          locked: false,
+          attemptsLeft,
+          message: `Incorrect UPI PIN. ${attemptsLeft} attempt${attemptsLeft === 1 ? '' : 's'} remaining.`
+        };
+      }
+    }
+  }
+
+  setPin(accountId, pinHash) {
+    const account = this.accounts.find(a => a.id === accountId);
+    if (!account) throw new Error('Account not found');
+    account.pinHash = pinHash;
+    if (this.currentUser.id === accountId) {
+      this.currentUser.pinHash = pinHash;
+    }
+    this._saveToDisk();
+    return { success: true, message: 'UPI PIN updated successfully' };
   }
 }
 

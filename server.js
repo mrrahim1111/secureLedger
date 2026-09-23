@@ -87,6 +87,36 @@ app.post('/api/auth/biometric-verify', (req, res) => {
   }, 350);
 });
 
+// ── UPI PIN SECURITY ENDPOINTS ──────────────────────────────
+app.post('/api/auth/verify-pin', (req, res) => {
+  try {
+    const { accountId = db.currentUser.id, pinHash } = req.body;
+    if (!pinHash) {
+      return res.status(400).json({ success: false, error: 'PIN hash is required' });
+    }
+    const result = db.verifyPin(accountId, pinHash);
+    if (!result.success) {
+      return res.status(result.locked ? 429 : 401).json(result);
+    }
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/auth/set-pin', (req, res) => {
+  try {
+    const { accountId = db.currentUser.id, pinHash } = req.body;
+    if (!pinHash) {
+      return res.status(400).json({ success: false, error: 'PIN hash is required' });
+    }
+    const result = db.setPin(accountId, pinHash);
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
 // ── USER PROFILE & REPOSITORIES ──────────────────────────────
 app.get('/api/user/profile', (req, res) => {
   res.json({
@@ -213,7 +243,7 @@ app.post('/api/transactions/screen', (req, res) => {
 // Double-Entry Atomic Send Payment with WebSocket Broadcast
 app.post('/api/transactions/send', (req, res) => {
   try {
-    const { receiverName, amount, description, device, location } = req.body;
+    const { receiverName, amount, description, device, location, pinVerified, faceVerified, stepUpRequired } = req.body;
     
     if (!receiverName || !amount) {
       return res.status(400).json({ success: false, error: 'Recipient and amount are required' });
@@ -224,7 +254,10 @@ app.post('/api/transactions/send', (req, res) => {
       amount: parseInt(amount, 10),
       description,
       device,
-      location
+      location,
+      pinVerified: pinVerified !== false,
+      faceVerified: !!faceVerified,
+      stepUpRequired: !!stepUpRequired
     });
 
     // Real-time broadcast to all connected WebSocket clients
