@@ -1,14 +1,16 @@
 // ─────────────────────────────────────────────────────────────
 // SecureLedger — Client-Side API Communication & Sync Layer
-// Connects UI with Express Backend with Seamless Standalone Fallback
+// Connects UI with Express Backend & WebSockets with Fallback
 // ─────────────────────────────────────────────────────────────
 
 const API = {
   baseUrl: window.location.origin.startsWith('http') ? window.location.origin : 'http://localhost:3000',
   isBackendConnected: false,
+  socket: null,
+  eventListeners: {},
 
   /**
-   * Initializes and checks connectivity with the backend server
+   * Initializes and checks connectivity with the backend server & WebSocket
    */
   async init() {
     try {
@@ -16,6 +18,7 @@ const API = {
       if (res.ok) {
         this.isBackendConnected = true;
         console.log('⚡ Connected to SecureLedger Backend API at', this.baseUrl);
+        this._initSocket();
         return true;
       }
     } catch (e) {
@@ -23,6 +26,45 @@ const API = {
       console.info('ℹ️ Running in Client-Side Standalone Mode (API offline or static file access)');
     }
     return false;
+  },
+
+  _initSocket() {
+    if (typeof io !== 'undefined' && this.isBackendConnected) {
+      try {
+        this.socket = io(this.baseUrl, { transports: ['websocket', 'polling'] });
+        
+        this.socket.on('connect', () => {
+          console.log('⚡ Real-time WebSocket connection established');
+        });
+
+        this.socket.on('transaction:new', (data) => {
+          this._emit('transaction:new', data);
+        });
+
+        this.socket.on('alert:new', (data) => {
+          this._emit('alert:new', data);
+        });
+
+        this.socket.on('alert:updated', (data) => {
+          this._emit('alert:updated', data);
+        });
+      } catch (err) {
+        console.warn('Socket.IO initialization error:', err);
+      }
+    }
+  },
+
+  on(event, callback) {
+    if (!this.eventListeners[event]) this.eventListeners[event] = [];
+    this.eventListeners[event].push(callback);
+  },
+
+  _emit(event, data) {
+    if (this.eventListeners[event]) {
+      this.eventListeners[event].forEach(cb => {
+        try { cb(data); } catch (err) { console.error('Socket event handler error:', err); }
+      });
+    }
   },
 
   /**
@@ -67,13 +109,13 @@ const API = {
   /**
    * Cryptographic biometric verification challenge
    */
-  async verifyBiometric(type = 'face') {
+  async verifyBiometric(type = 'face', passkeyCredential = null) {
     if (this.isBackendConnected) {
       try {
         const res = await fetch(`${this.baseUrl}/api/auth/biometric-verify`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type, challenge: Date.now() })
+          body: JSON.stringify({ type, challenge: Date.now(), passkeyCredential })
         });
         if (res.ok) return await res.json();
       } catch (err) {
@@ -86,12 +128,41 @@ const API = {
         resolve({
           success: true,
           type,
-          confidence: 0.988,
+          confidence: passkeyCredential ? 0.999 : 0.988,
           verifiedAt: new Date().toISOString(),
-          biometricProofToken: `bio_prf_${Date.now()}`
+          biometricProofToken: `bio_prf_${Date.now()}`,
+          hardwareBacked: !!passkeyCredential
         });
       }, 400);
     });
+  },
+
+  /**
+   * Native Hardware WebAuthn FIDO2 Passkey Prompt
+   */
+  async authenticateWithPasskey() {
+    if (window.PublicKeyCredential && navigator.credentials) {
+      try {
+        const challenge = new Uint8Array(32);
+        window.crypto.getRandomValues(challenge);
+        
+        const credential = await navigator.credentials.get({
+          publicKey: {
+            challenge,
+            timeout: 60000,
+            userVerification: 'preferred',
+            rpId: window.location.hostname || 'localhost'
+          }
+        });
+
+        if (credential) {
+          return await this.verifyBiometric('touch', { id: credential.id, type: credential.type });
+        }
+      } catch (err) {
+        console.info('Native WebAuthn cancelled or not configured on domain, switching to scanner HUD:', err.message);
+      }
+    }
+    return null;
   },
 
   /**

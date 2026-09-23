@@ -7,11 +7,18 @@
     "start": "node server.js",
     "dev": "node --watch server.js"
   },
-  "keywords": ["banking", "ledger", "fraud-detection", "ai", "webauthn"],
+  "keywords": [
+    "banking",
+    "ledger",
+    "fraud-detection",
+    "ai",
+    "webauthn"
+  ],
   "author": "Rahim",
   "license": "MIT",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.19.2",
-    "cors": "^2.8.5"
+    "socket.io": "^4.8.3"
   }
 }

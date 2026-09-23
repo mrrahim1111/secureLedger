@@ -1,9 +1,14 @@
 // ─────────────────────────────────────────────────────────────
 // SecureLedger — Core Double-Entry Banking Ledger Layer
-// Atomic Balance Consistency & Journal Invariant Verification
+// Atomic Balance Consistency, Journal Invariants & File Persistence
 // ─────────────────────────────────────────────────────────────
 
+const fs = require('fs');
+const path = require('path');
 const fraudEngine = require('./fraud-engine');
+
+const DATA_DIR = path.join(__dirname, 'data');
+const STORE_PATH = path.join(DATA_DIR, 'ledger-store.json');
 
 class LedgerDatabase {
   constructor() {
@@ -11,7 +16,33 @@ class LedgerDatabase {
   }
 
   init() {
-    // 1. Current User & Accounts
+    if (!fs.existsSync(DATA_DIR)) {
+      try {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+      } catch (e) {
+        console.warn('Could not create data dir:', e);
+      }
+    }
+
+    if (fs.existsSync(STORE_PATH)) {
+      try {
+        const raw = fs.readFileSync(STORE_PATH, 'utf8');
+        const data = JSON.parse(raw);
+        this.currentUser = data.currentUser;
+        this.users = data.users;
+        this.transactions = data.transactions;
+        this.journalEntries = data.journalEntries;
+        this.alerts = data.alerts;
+        this.networkNodes = data.networkNodes;
+        this.networkEdges = data.networkEdges;
+        console.log('📦 Persistent Ledger loaded successfully from disk');
+        return;
+      } catch (err) {
+        console.warn('Could not load persistent store, falling back to defaults:', err);
+      }
+    }
+
+    // Default Seed Data
     this.currentUser = {
       id: 'USR001',
       name: 'Rahim',
@@ -32,7 +63,6 @@ class LedgerDatabase {
       touchEnrolled: true
     };
 
-    // 2. All Bank Customers
     this.users = [
       { id: 'USR001', name: 'Rahim', avatar: 'R', accountId: 'SLAC000001', balance: 25430, risk: 'low', riskScore: 18, location: 'Kakinada', txnCount: 24, totalAmount: 142500, avgTxn: 1500 },
       { id: 'USR002', name: 'Arjun', avatar: 'A', accountId: 'SLAC000002', balance: 18200, risk: 'low', riskScore: 12, location: 'Hyderabad', txnCount: 18, totalAmount: 87600, avgTxn: 1200 },
@@ -46,7 +76,6 @@ class LedgerDatabase {
       { id: 'USR010', name: 'Company Payroll', avatar: 'CP', accountId: 'SLAC000010', balance: 5420000, risk: 'low', riskScore: 5, location: 'Hyderabad', txnCount: 1240, totalAmount: 18500000, avgTxn: 28000 }
     ];
 
-    // 3. Transactions Record
     this.transactions = [
       { id: 'TXN1001', date: '2026-09-23', time: '09:14', sender: 'Rahim', senderAcc: 'SLAC000001', receiver: 'Arjun', receiverAcc: 'SLAC000002', amount: 500, type: 'Debit', category: 'Transfer', risk: 'low', riskScore: 8, status: 'Completed', location: 'Kakinada', device: 'iPhone 15 Pro', method: 'UPI Sim', note: 'Coffee money' },
       { id: 'TXN1002', date: '2026-09-23', time: '08:00', sender: 'Company Payroll', senderAcc: 'SLAC000010', receiver: 'Rahim', receiverAcc: 'SLAC000001', amount: 30000, type: 'Credit', category: 'Salary', risk: 'low', riskScore: 4, status: 'Completed', location: 'Hyderabad', device: 'System', method: 'NEFT Sim', note: 'Monthly salary' },
@@ -62,7 +91,6 @@ class LedgerDatabase {
       { id: 'TXN1012', date: '2026-09-19', time: '21:45', sender: 'High-Risk Account', senderAcc: 'SLAC000009', receiver: 'Unknown Account', receiverAcc: 'SLAC000008', amount: 125000, type: 'Debit', category: 'Transfer', risk: 'high', riskScore: 97, status: 'Blocked', location: 'Multiple', device: 'Rooted Android', method: 'IMPS Sim', note: '' }
     ];
 
-    // 4. Double-Entry Journal Entries (Every transaction has Debits = Credits)
     this.journalEntries = [];
     this.transactions.forEach(t => {
       this.journalEntries.push(
@@ -71,14 +99,12 @@ class LedgerDatabase {
       );
     });
 
-    // 5. Fraud Alerts Center
     this.alerts = [
       { id: 'ALT001', txnId: 'TXN1003', amount: 75000, riskScore: 91, riskLevel: 'high', sender: 'Rahim', receiver: 'Unknown Account', timestamp: '2026-09-23 02:31 AM', status: 'Under Review', reasons: ['Transaction amount 50× higher than average (₹1,500)', 'New beneficiary - first-time transfer', 'Transaction at 2:31 AM (unusual time)', 'Transaction from unknown IP/VPN location', 'Device fingerprint mismatch'] },
       { id: 'ALT002', txnId: 'TXN1009', amount: 42000, riskScore: 87, riskLevel: 'high', sender: 'Aman', receiver: 'High-Risk Account', timestamp: '2026-09-20 11:15 PM', status: 'Under Review', reasons: ['Recipient account flagged as high-risk', 'Transaction at 11:15 PM', 'Amount significantly above average', 'VPN/Proxy detected during transaction'] },
       { id: 'ALT003', txnId: 'TXN1012', amount: 125000, riskScore: 97, riskLevel: 'high', sender: 'High-Risk Account', receiver: 'Unknown Account', timestamp: '2026-09-19 09:45 PM', status: 'Confirmed Fraud', reasons: ['Account flagged as high-risk', 'Transaction to flagged unknown account', 'Rooted device detected', 'Multiple rapid transactions', 'Amount exceeds daily limit pattern'] }
     ];
 
-    // 6. Network Nodes & Edges (for 3D WebGL Graph)
     this.networkNodes = [
       { id: 'n1', label: 'Rahim', risk: 'low', x: 0, y: 0, z: 0 },
       { id: 'n2', label: 'Arjun', risk: 'low', x: 3, y: 1, z: -1 },
@@ -104,6 +130,26 @@ class LedgerDatabase {
       { from: 'n10', to: 'n2', amount: 28000, risk: 'low', id: 'TXN1011' },
       { from: 'n9', to: 'n8', amount: 125000, risk: 'high', id: 'TXN1012' }
     ];
+
+    this._saveToDisk();
+  }
+
+  _saveToDisk() {
+    try {
+      const data = {
+        currentUser: this.currentUser,
+        users: this.users,
+        transactions: this.transactions,
+        journalEntries: this.journalEntries,
+        alerts: this.alerts,
+        networkNodes: this.networkNodes,
+        networkEdges: this.networkEdges,
+        updatedAt: new Date().toISOString()
+      };
+      fs.writeFileSync(STORE_PATH, JSON.stringify(data, null, 2), 'utf8');
+    } catch (err) {
+      console.warn('Could not save to disk:', err);
+    }
   }
 
   // ── LEDGER OPERATIONS ─────────────────────────────────────
@@ -198,6 +244,8 @@ class LedgerDatabase {
       });
     }
 
+    this._saveToDisk();
+
     return {
       transaction: newTxn,
       risk: riskEval,
@@ -244,6 +292,7 @@ class LedgerDatabase {
     else if (action === 'fraud') alert.status = 'Confirmed Fraud';
     else if (action === 'block') alert.status = 'Blocked';
 
+    this._saveToDisk();
     return alert;
   }
 

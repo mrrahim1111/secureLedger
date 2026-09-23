@@ -1,10 +1,20 @@
+const http = require('http');
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const { Server } = require('socket.io');
 const db = require('./db');
 const fraudEngine = require('./fraud-engine');
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 
 // Middleware
@@ -12,14 +22,24 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
+// ── WEBSOCKET LIVE STREAMING ──────────────────────────────────
+io.on('connection', (socket) => {
+  console.log(`⚡ WebSocket client connected: ${socket.id}`);
+
+  socket.on('disconnect', () => {
+    console.log(`🔌 WebSocket client disconnected: ${socket.id}`);
+  });
+});
+
 // ── HEALTH & STATUS ───────────────────────────────────────────
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
-    service: 'SecureLedger Banking API',
-    version: '2.0.0',
+    service: 'SecureLedger Banking API & WebSocket Gateway',
+    version: '2.1.0',
     timestamp: new Date().toISOString(),
-    ledgerBalanced: true
+    ledgerBalanced: true,
+    activeSockets: io.engine.clientsCount
   });
 });
 
@@ -39,20 +59,20 @@ app.post('/api/auth/login', (req, res) => {
 });
 
 app.post('/api/auth/biometric-verify', (req, res) => {
-  const { type = 'face', challenge, biometricData } = req.body;
+  const { type = 'face', challenge, biometricData, passkeyCredential } = req.body;
   
   // Real or simulated biometric token verification
   const isEnrolled = type === 'face' ? db.currentUser.faceEnrolled : db.currentUser.touchEnrolled;
   
-  if (!isEnrolled) {
+  if (!isEnrolled && !passkeyCredential) {
     return res.status(403).json({
       success: false,
       error: `Biometric credential (${type}) is not enrolled for account ${db.currentUser.accountNumber}`
     });
   }
 
-  // Simulated cryptographic liveness & mesh confirmation
-  const matchConfidence = 0.984; // 98.4% biometric confidence match
+  // Simulated cryptographic liveness & signature confirmation
+  const matchConfidence = passkeyCredential ? 0.999 : 0.984;
   const verified = matchConfidence > 0.85;
 
   setTimeout(() => {
@@ -61,9 +81,10 @@ app.post('/api/auth/biometric-verify', (req, res) => {
       type: type,
       confidence: matchConfidence,
       verifiedAt: new Date().toISOString(),
-      biometricProofToken: `bio_prf_${Date.now()}_sig${Math.floor(Math.random()*900000+100000)}`
+      biometricProofToken: `bio_prf_${Date.now()}_sig${Math.floor(Math.random()*900000+100000)}`,
+      hardwareBacked: !!passkeyCredential
     });
-  }, 400); // realistic biometric processing latency
+  }, 350);
 });
 
 // ── USER PROFILE & REPOSITORIES ──────────────────────────────
@@ -129,7 +150,7 @@ app.post('/api/transactions/screen', (req, res) => {
   }
 });
 
-// Double-Entry Atomic Send Payment
+// Double-Entry Atomic Send Payment with WebSocket Broadcast
 app.post('/api/transactions/send', (req, res) => {
   try {
     const { receiverName, amount, description, device, location } = req.body;
@@ -145,6 +166,18 @@ app.post('/api/transactions/send', (req, res) => {
       device,
       location
     });
+
+    // Real-time broadcast to all connected WebSocket clients
+    io.emit('transaction:new', {
+      transaction: result.transaction,
+      risk: result.risk,
+      balance: result.newBalance
+    });
+
+    if (result.risk.level === 'high') {
+      const latestAlert = db.getAlerts()[0];
+      io.emit('alert:new', { alert: latestAlert });
+    }
 
     res.status(201).json({
       success: true,
@@ -168,6 +201,14 @@ app.post('/api/alerts/:id/action', (req, res) => {
   try {
     const { action } = req.body;
     const alert = db.updateAlertAction(req.params.id, action);
+    
+    // Broadcast alert resolution across sockets
+    io.emit('alert:updated', {
+      alertId: req.params.id,
+      action,
+      alert
+    });
+
     res.json({
       success: true,
       alert
@@ -206,10 +247,11 @@ app.get('*', (req, res) => {
 });
 
 // Start Server
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`====================================================`);
-  console.log(`  SecureLedger Core Banking API & Web App Running`);
+  console.log(`  🛡️ SecureLedger Core Banking & Live WebSocket API`);
   console.log(`  Local URL: http://localhost:${PORT}`);
+  console.log(`  WebSocket Gateway: ws://localhost:${PORT}`);
   console.log(`  Environment: Production / Prototype Mode`);
   console.log(`====================================================`);
 });

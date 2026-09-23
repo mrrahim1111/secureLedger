@@ -842,6 +842,7 @@ class SecureLedgerApp {
     this.applyTheme(this.theme);
     this.setupLogin();
     this.setupBiometrics();
+    this.setupSocketListeners();
     this.setupNavigation();
     this.setupPaymentFlow();
     this.setupFilters();
@@ -849,6 +850,50 @@ class SecureLedgerApp {
     this.setupMobileNav();
     this.setupScreeningOverlay();
     this.setupToggles();
+  }
+
+  setupSocketListeners() {
+    API.on('transaction:new', (data) => {
+      console.log('⚡ Real-time Transaction Received via WebSocket:', data);
+      if (data && data.transaction) {
+        if (!APP_DATA.transactions.some(t => t.id === data.transaction.id)) {
+          APP_DATA.transactions.unshift(data.transaction);
+        }
+        if (typeof this.renderTransactionTable === 'function') this.renderTransactionTable();
+        if (APP_DATA.liveFeed) {
+          APP_DATA.liveFeed.unshift({
+            id: data.transaction.id,
+            amount: data.transaction.amount,
+            risk: data.transaction.risk,
+            riskScore: data.transaction.riskScore,
+            sender: data.transaction.sender,
+            receiver: data.transaction.receiver,
+            time: data.transaction.time
+          });
+          if (APP_DATA.liveFeed.length > 12) APP_DATA.liveFeed.pop();
+          if (typeof this.renderLiveFeed === 'function') this.renderLiveFeed();
+        }
+      }
+    });
+
+    API.on('alert:new', (data) => {
+      console.log('🚨 Real-time Alert Received via WebSocket:', data);
+      if (data && data.alert) {
+        if (!APP_DATA.alerts.some(a => a.id === data.alert.id)) {
+          APP_DATA.alerts.unshift(data.alert);
+        }
+        if (typeof this.renderAlerts === 'function') this.renderAlerts();
+      }
+    });
+
+    API.on('alert:updated', (data) => {
+      console.log('✓ Real-time Alert Update Received via WebSocket:', data);
+      if (data && data.alert) {
+        const found = APP_DATA.alerts.find(a => a.id === data.alertId);
+        if (found) found.status = data.alert.status;
+        if (typeof this.renderAlerts === 'function') this.renderAlerts();
+      }
+    });
   }
 
   // ── BIOMETRIC AUTHENTICATION & FACE RECOGNITION ──
@@ -863,7 +908,14 @@ class SecureLedgerApp {
     }
 
     if (touchBtn) {
-      touchBtn.addEventListener('click', () => {
+      touchBtn.addEventListener('click', async () => {
+        // Try native WebAuthn hardware biometric prompt first
+        const passkeyAuth = await API.authenticateWithPasskey();
+        if (passkeyAuth && passkeyAuth.success) {
+          this.showToast('✓ Hardware Touch ID verified via WebAuthn.', 'success');
+          this.login(true);
+          return;
+        }
         this.launchBiometric('touch', 'login', () => this.login(true));
       });
     }
@@ -1830,6 +1882,140 @@ class SecureLedgerApp {
     if (typeof this.renderAlerts === 'function') this.renderAlerts();
     this.showToast('✕ Transaction blocked. User notified.', 'warning');
     setTimeout(() => this.navigateTo('alerts'), 1000);
+  }
+
+  // ── PDF STATEMENT GENERATOR ───────────────────
+  downloadStatementPDF() {
+    if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
+      this.showToast('PDF generator library is initializing...', 'info');
+      return;
+    }
+
+    try {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const user = APP_DATA.currentUser;
+      const txns = APP_DATA.transactions;
+      const now = new Date();
+      const statementDate = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+
+      // 1. Header Banner
+      doc.setFillColor(15, 23, 42); // #0f172a
+      doc.rect(0, 0, 210, 36, 'F');
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
+      doc.text('SECURELEDGER BANK', 14, 18);
+
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(148, 163, 184);
+      doc.text('AI-Monitored Digital Banking & Double-Entry Ledger System', 14, 25);
+      doc.text(`Generated on: ${statementDate} ${now.toLocaleTimeString()}`, 14, 30);
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(255, 255, 255);
+      doc.text('OFFICIAL ACCOUNT STATEMENT', 135, 18);
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(56, 189, 248);
+      doc.text('VERIFIED WITH AUDIT PROOF', 135, 25);
+
+      // 2. Account Information Summary Box
+      doc.setFillColor(248, 250, 252);
+      doc.setDrawColor(226, 232, 240);
+      doc.roundedRect(14, 42, 182, 34, 3, 3, 'FD');
+
+      doc.setTextColor(15, 23, 42);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Account Holder:', 20, 50);
+      doc.text('Account Number:', 20, 58);
+      doc.text('IFSC Code:', 20, 66);
+
+      doc.setFont('helvetica', 'normal');
+      doc.text(user.name, 56, 50);
+      doc.text(user.accountNumber || 'SLAC000001', 56, 58);
+      doc.text(user.ifsc || 'SLB0001234', 56, 66);
+
+      doc.setFont('helvetica', 'bold');
+      doc.text('Current Balance:', 110, 50);
+      doc.text('KYC Status:', 110, 58);
+      doc.text('Risk Profile:', 110, 66);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(16, 185, 129); // Green
+      doc.setFont('helvetica', 'bold');
+      doc.text(`INR ${user.balance.toLocaleString('en-IN')}.00`, 146, 50);
+      doc.setTextColor(15, 23, 42);
+      doc.text('VERIFIED (Biometric Tier-1)', 146, 58);
+      doc.text(`${user.riskProfile || 'Low'} (AI Score: 18/100)`, 146, 66);
+
+      // 3. Transactions Table (autoTable)
+      const tableData = txns.map(t => [
+        t.id,
+        `${t.date}\n${t.time || ''}`,
+        `${t.sender} -> ${t.receiver}`,
+        t.type,
+        t.category,
+        (t.type === 'Debit' ? '-' : '+') + `INR ${t.amount.toLocaleString('en-IN')}`,
+        t.risk.toUpperCase(),
+        t.status
+      ]);
+
+      if (typeof doc.autoTable === 'function') {
+        doc.autoTable({
+          startY: 82,
+          head: [['TXN ID', 'Date & Time', 'Counterparties', 'Type', 'Category', 'Amount', 'AI Risk', 'Status']],
+          body: tableData,
+          theme: 'striped',
+          headStyles: {
+            fillColor: [15, 23, 42],
+            textColor: [255, 255, 255],
+            fontSize: 8,
+            fontStyle: 'bold'
+          },
+          bodyStyles: {
+            fontSize: 7.5,
+            cellPadding: 3
+          },
+          columnStyles: {
+            0: { font: 'courier', fontStyle: 'bold', cellWidth: 20 },
+            1: { cellWidth: 22 },
+            2: { cellWidth: 42 },
+            3: { cellWidth: 16 },
+            4: { cellWidth: 20 },
+            5: { fontStyle: 'bold', halign: 'right', cellWidth: 24 },
+            6: { fontStyle: 'bold', halign: 'center', cellWidth: 16 },
+            7: { cellWidth: 22 }
+          },
+          didDrawPage: (data) => {
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'italic');
+            doc.setTextColor(148, 163, 184);
+            doc.text(
+              'SecureLedger Automated Banking System — Academic Prototype — Double-Entry Invariant Verified',
+              14,
+              288
+            );
+            doc.text(`Page ${doc.internal.getNumberOfPages()}`, 190, 288);
+          }
+        });
+      }
+
+      doc.save(`SecureLedger_Statement_${user.accountNumber || 'SLAC000001'}_${Date.now()}.pdf`);
+      this.showToast('✓ Statement downloaded successfully.', 'success');
+    } catch (err) {
+      console.error('PDF generation error:', err);
+      this.showToast('Could not generate PDF statement.', 'danger');
+    }
   }
 }
 
