@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SecureLedger — AI-Powered Banking & Fraud Screening</title>
+  <meta name="description" content="SecureLedger: AI-powered digital banking ledger with real-time fraud detection and behavioral analytics. College project prototype." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div id="app">
+
+<!-- ══════════════════════════════════════════
+     LOGIN PAGE
+══════════════════════════════════════════ -->
+<div id="login-page">
+  <div class="login-left">
+    <div class="login-brand">
+      <div class="login-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <polyline points="9 12 11 14 15 10"/>
+        </svg>
+      </div>
+      <h1>SecureLedger</h1>
+      <p>AI-Powered Banking &amp; Fraud Screening</p>
+      <div class="tagline">"Track every transaction. Detect every anomaly."</div>
+    </div>
+
+    <form id="login-form" class="login-form" autocomplete="off">
+      <div class="form-group">
+        <label for="email-input">Email Address</label>
+        <div class="input-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <input id="email-input" type="email" placeholder="rahim@securledger.dev" value="rahim@securledger.dev" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password-input">Password</label>
+        <div class="input-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input id="password-input" type="password" placeholder="••••••••" value="demo1234" style="padding-right:44px" />
+          <button type="button" id="pw-toggle" style="position:absolute;right:12px;color:var(--text-muted);display:flex;align-items:center">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label class="check-label">
+          <input type="checkbox" checked /> Remember me
+        </label>
+        <button type="button" class="link-btn">Forgot password?</button>
+      </div>
+
+      <button type="submit" id="login-btn" class="btn-primary">Sign In to SecureLedger</button>
+    </form>
+
+    <div class="login-demo-note">
+      🔒 <strong>Prototype Demonstration</strong><br />
+      All accounts, transactions, and data are fictional.<br />
+      No real banking connections are made.
+    </div>
+  </div>
+
+  <div class="login-right">
+    <div class="login-visual">
+      <h2>Financial Security,<br />Reimagined with AI</h2>
+      <p>Real-time fraud detection, behavioral analytics, and intelligent transaction monitoring — all in one platform.</p>
+
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-icon" style="background:rgba(59,114,255,0.12);color:#3b72ff">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><line x1="12" y1="8" x2="5" y2="16"/><line x1="12" y1="8" x2="19" y2="16"/></svg>
+          </div>
+          <div>
+            <h4>3D Transaction Network</h4>
+            <p>Interactive graph showing money flows between all accounts.</p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon" style="background:rgba(34,197,94,0.12);color:#22c55e">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          </div>
+          <div>
+            <h4>AI Fraud Screening</h4>
+            <p>Every transaction analyzed with explainable risk scoring.</p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon" style="background:rgba(245,158,11,0.12);color:#f59e0b">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div>
+            <h4>Behavioral Analytics</h4>
+            <p>Detects anomalies by comparing to user's normal patterns.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END LOGIN PAGE -->
+
+
+<!-- ══════════════════════════════════════════
+     APP SHELL (sidebar + topbar + pages)
+══════════════════════════════════════════ -->
+<div id="app-shell">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <button class="hamburger" id="hamburger-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+
+    <div class="topbar-logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+      </div>
+      <div>
+        <div class="logo-name">SecureLedger</div>
+        <div class="logo-sub">Fraud Screening</div>
+      </div>
+    </div>
+
+    <div class="topbar-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" placeholder="Search transactions, accounts..." />
+    </div>
+
+    <div class="topbar-actions">
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        <span>System Active</span>
+      </div>
+
+      <button class="icon-btn" id="theme-toggle-btn" title="Toggle Light / Dark Mode" onclick="app.toggleTheme()">
+        <svg id="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
+
+      <button class="icon-btn" title="Notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <div class="notif-badge"></div>
+      </button>
+
+      <div class="user-pill" data-page="settings" onclick="app.navigateTo('settings')">
+        <div class="user-avatar">R</div>
+        <span>Rahim</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SIDEBAR OVERLAY (mobile) -->
+  <div class="sidebar-overlay"></div>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Main</div>
+      <div class="nav-item active" data-page="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item" data-page="payments">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Payments
+      </div>
+      <div class="nav-item" data-page="ledger">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Ledger
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Security</div>
+      <div class="nav-item" data-page="alerts">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Fraud Alerts
+        <span class="nav-badge danger">5</span>
+      </div>
+      <div class="nav-item" data-page="investigation">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Investigation
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Insights</div>
+      <div class="nav-item" data-page="analytics">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Analytics
+      </div>
+      <div class="nav-item" data-page="admin">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Admin
+        <span class="nav-badge warn">3</span>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user" data-page="settings" onclick="app.navigateTo('settings')">
+        <div class="user-avatar">R</div>
+        <div>
+          <div class="user-name">Rahim</div>
+          <div class="user-role">Account Holder</div>
+        </div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;color:var(--text-muted);margin-left:auto"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- ─── DASHBOARD ─────────────────────────── -->
+    <section id="page-dashboard" class="page-section active">
+      <div class="page-header">
+        <h1>Good afternoon, Rahim 👋</h1>
+        <p>Here's your financial security overview for today, Wednesday 23 September 2026.</p>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="stat-grid">
+        <div class="stat-card accent">
+          <div class="stat-header">
+            <div class="stat-label">Available Balance</div>
+            <div class="stat-icon accent">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            </div>
+          </div>
+          <div class="stat-value">₹25,430</div>
+          <div class="stat-sub">SLAC000001 · KYC Verified</div>
+        </div>
+
+        <div class="stat-card success">
+          <div class="stat-header">
+            <div class="stat-label">Total Credits</div>
+            <div class="stat-icon success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            </div>
+          </div>
+          <div class="stat-value" style="color:var(--success)">₹42,000</div>
+          <div class="stat-sub">This month</div>
+        </div>
+
+        <div class="stat-card info">
+          <div class="stat-header">
+            <div class="stat-label">Total Debits</div>
+            <div class="stat-icon info">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+            </div>
+          </div>
+          <div class="stat-value">₹18,570</div>
+          <div class="stat-sub">This month</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-label">Total Transactions</div>
+            <div class="stat-icon" style="background:rgba(139,92,246,0.12);color:#8b5cf6">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+          </div>
+          <div class="stat-value">5,420</div>
+          <div class="stat-sub">All time</div>
+        </div>
+
+        <div class="stat-card danger">
+          <div class="stat-header">
+            <div class="stat-label">Suspicious</div>
+            <div class="stat-icon danger">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+          </div>
+          <div class="stat-value" style="color:var(--danger)">21</div>
+          <div class="stat-sub">Flagged for review</div>
+        </div>
+      </div>
+
+      <!-- Main content: 3D network + Risk panel -->
+      <div class="grid-21 mb-20">
+        <!-- 3D Network -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h3>Transaction Network</h3>
+              <p>Interactive 3D visualization — drag to rotate, scroll to zoom, click nodes for details</p>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="app.navigateTo('analytics')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              Analytics
+            </button>
+          </div>
+
+          <div style="position:relative">
+            <div id="network-canvas-container">
+              <div class="canvas-legend">
+                <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div>Low Risk</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Medium Risk</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div>High Risk</div>
+              </div>
+              <div class="canvas-controls">
+                <button class="canvas-btn" id="canvas-zoom-in" title="Zoom In">+</button>
+                <button class="canvas-btn" id="canvas-zoom-out" title="Zoom Out">−</button>
+                <button class="canvas-btn" id="canvas-reset" title="Reset View">⊙</button>
+              </div>
+              <div class="canvas-tooltip" id="node-tooltip"></div>
+            </div>
+          </div>
+
+          <!-- Node detail panel (shown on click) -->
+          <div id="node-detail-panel" style="display:none;padding:16px 20px;border-top:1px solid var(--border);background:var(--bg-elevated)">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+              <h4 id="node-detail-name" style="font-size:15px;font-weight:700"></h4>
+              <button onclick="document.getElementById('node-detail-panel').style.display='none'" style="color:var(--text-muted);font-size:18px;line-height:1">×</button>
+            </div>
+            <div class="kv-grid" style="grid-template-columns:repeat(3,1fr)">
+              <div class="kv-item"><div class="kv-label">Account ID</div><div class="kv-value mono" id="node-detail-id"></div></div>
+              <div class="kv-item"><div class="kv-label">Transactions</div><div class="kv-value" id="node-detail-txns"></div></div>
+              <div class="kv-item"><div class="kv-label">Total Amount</div><div class="kv-value" id="node-detail-total"></div></div>
+              <div class="kv-item"><div class="kv-label">Avg Transaction</div><div class="kv-value" id="node-detail-avg"></div></div>
+              <div class="kv-item"><div class="kv-label">Risk Score</div><div class="kv-value" id="node-detail-score"></div></div>
+              <div class="kv-item"><div class="kv-label">Risk Status</div><div class="kv-value" id="node-detail-status"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Risk Engine -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h3>AI Risk Engine</h3>
+              <p>Real-time fraud intelligence</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="risk-score-ring">
+              <svg width="120" height="120" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="45" fill="none" stroke="var(--bg-elevated)" stroke-width="8"/>
+                <circle cx="60" cy="60" r="45" fill="none" stroke="var(--success)" stroke-width="8"
+                  stroke-dasharray="50 283" stroke-linecap="round"/>
+              </svg>
+              <div class="risk-score-center">
+                <div class="risk-score-num" style="color:var(--success)">18</div>
+                <div class="risk-score-denom">/100</div>
+              </div>
+            </div>
+
+            <div class="risk-status-label" style="color:var(--success)">LOW RISK</div>
+
+            <div style="margin-bottom:20px">
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">Account Risk Score</div>
+              <div class="risk-meter">
+                <div class="risk-meter-fill low" style="width:18%"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:4px">
+                <span>0 — Safe</span><span>50 — Review</span><span>100 — Fraud</span>
+              </div>
+            </div>
+
+            <div class="system-status-list">
+              <div class="sys-status-item"><div class="sys-dot"></div>Transaction monitoring active</div>
+              <div class="sys-status-item"><div class="sys-dot"></div>Behavioral analysis active</div>
+              <div class="sys-status-item"><div class="sys-dot"></div>Anomaly detection active</div>
+              <div class="sys-status-item"><div class="sys-dot"></div>Fraud screening active</div>
+              <div class="sys-status-item"><div class="sys-dot"></div>Network analysis active</div>
+            </div>
+
+            <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px">RECENT RISK FACTORS</div>
+              <div class="risk-factors">
+                <div class="risk-factor-item">
+                  <div class="risk-factor-label"><span>Transaction Frequency</span><span style="color:var(--success)">Normal</span></div>
+                  <div class="factor-bar"><div class="factor-fill" style="width:18%;background:var(--success)"></div></div>
+                </div>
+                <div class="risk-factor-item">
+                  <div class="risk-factor-label"><span>Amount Pattern</span><span style="color:var(--success)">Normal</span></div>
+                  <div class="factor-bar"><div class="factor-fill" style="width:22%;background:var(--success)"></div></div>
+                </div>
+                <div class="risk-factor-item">
+                  <div class="risk-factor-label"><span>Beneficiary Risk</span><span style="color:var(--danger)">High Alert</span></div>
+                  <div class="factor-bar"><div class="factor-fill" style="width:91%;background:var(--danger)"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <button class="btn btn-accent w-full" style="margin-top:16px" onclick="app.navigateTo('alerts')">
+              View 5 Active Alerts
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Transactions Quick View -->
+      <div class="panel">
+        <div class="panel-header">
+          <div><h3>Recent Transactions</h3><p>Latest account activity</p></div>
+          <button class="btn btn-ghost btn-sm" onclick="app.navigateTo('ledger')">View All</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>TXN ID</th><th>Date</th><th>From / To</th><th>Amount</th><th>Category</th><th>Risk</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="app.openTransaction('TXN1003')">
+                <td class="mono" style="color:var(--accent)">TXN1003</td>
+                <td>Sep 23<br><span style="font-size:11px;color:var(--text-muted)">02:31 AM</span></td>
+                <td>Rahim → Unknown Account</td>
+                <td class="amount-negative">-₹75,000</td>
+                <td style="color:var(--text-secondary)">Transfer</td>
+                <td><span class="badge high">HIGH</span></td>
+                <td><span style="color:var(--warning);font-size:12px">⚠ Review</span></td>
+              </tr>
+              <tr onclick="app.openTransaction('TXN1002')">
+                <td class="mono" style="color:var(--accent)">TXN1002</td>
+                <td>Sep 23<br><span style="font-size:11px;color:var(--text-muted)">08:00 AM</span></td>
+                <td>Company Payroll → Rahim</td>
+                <td class="amount-positive">+₹30,000</td>
+                <td style="color:var(--text-secondary)">Salary</td>
+                <td><span class="badge low">LOW</span></td>
+                <td><span style="color:var(--success);font-size:12px">✓ Completed</span></td>
+              </tr>
+              <tr onclick="app.openTransaction('TXN1001')">
+                <td class="mono" style="color:var(--accent)">TXN1001</td>
+                <td>Sep 23<br><span style="font-size:11px;color:var(--text-muted)">09:14 AM</span></td>
+                <td>Rahim → Arjun</td>
+                <td class="amount-negative">-₹500</td>
+                <td style="color:var(--text-secondary)">Transfer</td>
+                <td><span class="badge low">LOW</span></td>
+                <td><span style="color:var(--success);font-size:12px">✓ Completed</span></td>
+              </tr>
+              <tr onclick="app.openTransaction('TXN1004')">
+                <td class="mono" style="color:var(--accent)">TXN1004</td>
+                <td>Sep 22<br><span style="font-size:11px;color:var(--text-muted)">07:42 PM</span></td>
+                <td>Rahim → Merchant A</td>
+                <td class="amount-negative">-₹1,200</td>
+                <td style="color:var(--text-secondary)">Shopping</td>
+                <td><span class="badge low">LOW</span></td>
+                <td><span style="color:var(--success);font-size:12px">✓ Completed</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── PAYMENTS ───────────────────────────── -->
+    <section id="page-payments" class="page-section">
+      <div class="page-header">
+        <h1>Send Money</h1>
+        <p>Simulated payment — no real funds are transferred.</p>
+      </div>
+
+      <div class="payment-container">
+        <!-- PAYMENT FORM -->
+        <div id="payment-form-section">
+          <div class="panel mb-16">
+            <div class="panel-header">
+              <div><h3>From Account</h3></div>
+            </div>
+            <div class="panel-body">
+              <div class="account-select-card">
+                <div class="user-avatar" style="width:44px;height:44px;font-size:16px;border-radius:12px">R</div>
+                <div class="account-info">
+                  <h4>Rahim — SLAC000001</h4>
+                  <p>Available balance: <strong style="color:var(--success)">₹25,430</strong></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header"><h3>Transfer Details</h3></div>
+            <div class="panel-body" style="display:flex;flex-direction:column;gap:16px">
+              <div class="form-group" style="margin:0">
+                <label style="font-size:13px;font-weight:500;color:var(--text-secondary);display:block;margin-bottom:8px">Recipient</label>
+                <select id="pay-to" style="width:100%;padding:12px 14px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-primary);font-size:14px;outline:none">
+                  <option value="">Select recipient</option>
+                  <option value="Arjun">Arjun — SLAC000002</option>
+                  <option value="Priya">Priya — SLAC000003</option>
+                  <option value="Aman">Aman — SLAC000004</option>
+                  <option value="Neha">Neha — SLAC000005</option>
+                  <option value="Merchant A">Merchant A — SLAC000006</option>
+                  <option value="Merchant B">Merchant B — SLAC000007</option>
+                  <option value="Unknown Account">Unknown Account — SLAC000008</option>
+                </select>
+              </div>
+
+              <div class="form-group" style="margin:0">
+                <label style="font-size:13px;font-weight:500;color:var(--text-secondary);display:block;margin-bottom:8px">Amount (₹)</label>
+                <div class="input-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  <input id="pay-amount" type="number" placeholder="0" min="1" max="100000"
+                    style="padding:12px 14px 12px 42px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-primary);font-size:24px;font-weight:700;width:100%;outline:none" />
+                </div>
+                <div style="font-size:20px;font-weight:700;color:var(--text-secondary);margin-top:8px;text-align:center" id="pay-amount-display">₹0</div>
+              </div>
+
+              <div class="form-group" style="margin:0">
+                <label style="font-size:13px;font-weight:500;color:var(--text-secondary);display:block;margin-bottom:8px">Description (optional)</label>
+                <input id="pay-desc" type="text" placeholder="e.g., Lunch split, Rent..."
+                  style="width:100%;padding:12px 14px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-primary);font-size:14px;outline:none" />
+              </div>
+
+              <button id="review-payment-btn" class="btn btn-accent btn-lg w-full" style="margin-top:12px">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Review Payment
+              </button>
+
+              <p style="font-size:11px;color:var(--text-muted);text-align:center">All transactions are screened by SecureLedger AI before processing.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAYMENT REVIEW -->
+        <div id="payment-review" style="display:none">
+          <div class="panel">
+            <div class="panel-header"><h3>Confirm Payment</h3><p>Review before sending</p></div>
+            <div class="panel-body">
+              <div class="amount-display">
+                <div class="currency">₹</div>
+                <div class="amount" id="review-amount">0</div>
+              </div>
+
+              <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0;gap:12px">
+                <div style="text-align:center;flex:1">
+                  <div class="user-avatar" style="width:48px;height:48px;font-size:18px;margin:0 auto 6px;border-radius:14px">R</div>
+                  <div style="font-size:14px;font-weight:600" id="review-from">Rahim</div>
+                  <div style="font-size:11px;color:var(--text-muted)">Sender</div>
+                </div>
+                <div style="flex:1;height:2px;background:var(--border);position:relative">
+                  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--bg-card);padding:0 8px;color:var(--accent)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  </div>
+                </div>
+                <div style="text-align:center;flex:1">
+                  <div class="user-avatar" style="width:48px;height:48px;font-size:18px;margin:0 auto 6px;border-radius:14px;background:linear-gradient(135deg,#22c55e,#16a34a)">A</div>
+                  <div style="font-size:14px;font-weight:600" id="review-to">Arjun</div>
+                  <div style="font-size:11px;color:var(--text-muted)">Recipient</div>
+                </div>
+              </div>
+
+              <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;margin:16px 0">
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px">
+                  <span style="color:var(--text-secondary)">Description</span>
+                  <span id="review-desc">—</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:13px">
+                  <span style="color:var(--text-secondary)">Transaction Fee</span>
+                  <span style="color:var(--success)">₹0 (Free)</span>
+                </div>
+              </div>
+
+              <div style="background:var(--info-bg);border:1px solid rgba(6,182,212,0.2);border-radius:var(--radius-md);padding:12px;margin-bottom:16px;font-size:12px;color:var(--text-secondary)">
+                🛡️ This transaction will be screened by SecureLedger AI before processing.
+              </div>
+
+              <div class="btn-group">
+                <button id="cancel-payment-btn" class="btn btn-ghost" style="flex:1">Cancel</button>
+                <button id="confirm-payment-btn" class="btn btn-accent" style="flex:2">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                  Confirm Payment
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAYMENT SUCCESS -->
+        <div id="payment-success" style="display:none">
+          <div class="panel" style="text-align:center">
+            <div class="panel-body" style="padding:48px 32px">
+              <div style="width:72px;height:72px;background:var(--success-bg);border:2px solid var(--success-border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
+              <h2 style="font-size:22px;font-weight:700;margin-bottom:6px">Payment Sent!</h2>
+              <div style="font-size:32px;font-weight:800;color:var(--success);margin:12px 0" id="success-amount">₹0</div>
+              <p style="color:var(--text-secondary);font-size:14px;margin-bottom:4px">Successfully sent to <strong id="success-to"></strong></p>
+              <p style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted);margin-bottom:8px" id="success-txnid"></p>
+              <p style="font-size:12px;color:var(--text-muted)" id="success-risk"></p>
+
+              <div style="display:flex;gap:10px;justify-content:center;margin-top:28px">
+                <button id="review-btn" class="btn btn-ghost" onclick="app.navigateTo('ledger')">View in Ledger</button>
+                <button class="btn btn-accent" onclick="document.getElementById('payment-success').style.display='none';document.getElementById('payment-form-section').style.display='block'">New Payment</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FRAUD ALERT (inline) -->
+        <div id="fraud-alert-inline" style="display:none">
+          <div class="fraud-warning-banner" style="flex-direction:column;padding:24px">
+            <div style="display:flex;gap:14px;align-items:flex-start;width:100%">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;color:var(--danger);flex-shrink:0;margin-top:2px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <div>
+                <h4 style="font-size:16px;font-weight:700;color:var(--danger)">⚠ TRANSACTION REQUIRES REVIEW</h4>
+                <div style="font-size:28px;font-weight:800;margin:8px 0" id="fraud-alert-amount">₹0</div>
+                <p style="font-size:14px;color:var(--text-secondary)">Rahim → <span id="fraud-alert-to"></span></p>
+                <p style="font-size:14px;margin-top:4px">Risk Score: <strong style="color:var(--danger)" id="fraud-alert-score"></strong></p>
+              </div>
+            </div>
+            <div style="margin-top:16px;width:100%">
+              <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">This transaction has been flagged due to:</p>
+              <ul class="reasons-list">
+                <li>Transaction amount significantly exceeds your normal behavior (avg ₹1,500)</li>
+                <li>New or high-risk beneficiary detected</li>
+                <li>Transaction pattern differs from your historical activity</li>
+                <li>Possible anomalous location or device detected</li>
+              </ul>
+            </div>
+            <div class="btn-group" style="margin-top:20px">
+              <button id="fraud-cancel-payment-btn" class="btn btn-ghost" style="flex:1">Cancel Transaction</button>
+              <button id="fraud-review-btn" class="btn btn-danger" style="flex:1">Send for Review</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── TRANSACTION LEDGER ─────────────────── -->
+    <section id="page-ledger" class="page-section">
+      <div class="page-header">
+        <h1>Transaction Ledger</h1>
+        <p>Complete record of all account transactions with AI risk scoring.</p>
+      </div>
+
+      <div class="panel">
+        <div class="filter-bar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;color:var(--text-muted);flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="ledger-search" type="search" placeholder="Search by ID, name, category..." style="flex:1;min-width:160px" />
+          <select id="ledger-risk-filter">
+            <option value="">All Risk Levels</option>
+            <option value="low">Low Risk</option>
+            <option value="medium">Medium Risk</option>
+            <option value="high">High Risk</option>
+          </select>
+          <select id="ledger-type-filter">
+            <option value="">All Types</option>
+            <option value="Credit">Credit</option>
+            <option value="Debit">Debit</option>
+          </select>
+          <select id="ledger-status-filter">
+            <option value="">All Status</option>
+            <option value="Completed">Completed</option>
+            <option value="Review">Under Review</option>
+            <option value="Blocked">Blocked</option>
+          </select>
+        </div>
+
+        <div style="overflow-x:auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>TXN ID</th>
+                <th>Date / Time</th>
+                <th>Sender</th>
+                <th>Receiver</th>
+                <th>Amount</th>
+                <th>Type</th>
+                <th>Category</th>
+                <th>Risk</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="ledger-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── TRANSACTION DETAIL ────────────────── -->
+    <section id="page-transaction-detail" class="page-section">
+      <div class="page-header" style="display:flex;align-items:center;gap:16px">
+        <button class="btn btn-ghost btn-sm" onclick="app.navigateTo('ledger')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><polyline points="15 18 9 12 15 6"/></svg>
+          Back
+        </button>
+        <div>
+          <h1 id="td-id" style="font-size:18px">Transaction Detail</h1>
+          <p>Full transaction record with AI risk analysis</p>
+        </div>
+      </div>
+
+      <div class="grid-21">
+        <div>
+          <!-- Transaction Info -->
+          <div class="panel mb-20">
+            <div class="panel-header">
+              <h3>Transaction Information</h3>
+              <div id="td-status" style="font-size:13px;font-weight:600"></div>
+            </div>
+            <div class="panel-body">
+              <div style="text-align:center;margin-bottom:24px">
+                <div style="font-size:36px;font-weight:800;letter-spacing:-1px" id="td-amount"></div>
+              </div>
+              <div class="kv-grid">
+                <div class="kv-item"><div class="kv-label">Transaction ID</div><div class="kv-value mono" id="td-id" style="color:var(--accent)"></div></div>
+                <div class="kv-item"><div class="kv-label">Category</div><div class="kv-value" id="td-category"></div></div>
+                <div class="kv-item"><div class="kv-label">Sender</div><div class="kv-value" id="td-sender"></div></div>
+                <div class="kv-item"><div class="kv-label">Receiver</div><div class="kv-value" id="td-receiver"></div></div>
+                <div class="kv-item"><div class="kv-label">Date</div><div class="kv-value" id="td-date"></div></div>
+                <div class="kv-item"><div class="kv-label">Time</div><div class="kv-value mono" id="td-time"></div></div>
+                <div class="kv-item">
+                  <div class="kv-label">Location</div>
+                  <div class="kv-value" id="td-location"></div>
+                </div>
+                <div class="kv-item">
+                  <div class="kv-label">Device</div>
+                  <div class="kv-value" id="td-device"></div>
+                </div>
+                <div class="kv-item"><div class="kv-label">Payment Method</div><div class="kv-value" id="td-method"></div></div>
+                <div class="kv-item"><div class="kv-label">Note</div><div class="kv-value" id="td-note"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Risk Analysis -->
+          <div class="panel">
+            <div class="panel-header">
+              <h3>AI Risk Analysis</h3>
+              <span id="td-risk-level" style="font-size:12px;font-weight:700;letter-spacing:0.5px"></span>
+            </div>
+            <div class="panel-body">
+              <div style="margin-bottom:20px">
+                <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px">Overall Risk Score</div>
+                <div style="font-size:28px;font-weight:800;margin-bottom:8px" id="td-risk-score"></div>
+                <div class="risk-meter">
+                  <div class="risk-meter-fill high" id="td-risk-meter" style="width:20%"></div>
+                </div>
+              </div>
+              <div id="td-risk-factors" class="risk-factors"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Behavioral comparison -->
+        <div>
+          <div class="panel mb-20">
+            <div class="panel-header"><h3>User Behavior Profile</h3></div>
+            <div class="panel-body">
+              <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Rahim's Normal Behavior</div>
+              <div class="behavior-metric"><span class="behavior-label">Avg Transaction Amount</span><span class="behavior-value">₹1,500</span></div>
+              <div class="behavior-metric"><span class="behavior-label">Daily Transactions</span><span class="behavior-value">4 avg.</span></div>
+              <div class="behavior-metric"><span class="behavior-label">Active Hours</span><span class="behavior-value">8 AM – 10 PM</span></div>
+              <div class="behavior-metric"><span class="behavior-label">Common Location</span><span class="behavior-value">Kakinada, AP</span></div>
+              <div class="behavior-metric"><span class="behavior-label">Top Categories</span><span class="behavior-value">Food, Shopping, Transfers</span></div>
+              <div class="behavior-metric"><span class="behavior-label">Known Beneficiaries</span><span class="behavior-value">Arjun, Priya, Merchant A</span></div>
+            </div>
+          </div>
+
+          <div class="panel mb-20">
+            <div class="panel-header"><h3>Anomaly Comparison</h3></div>
+            <div class="panel-body">
+              <div class="behavior-comparison">
+                <p style="font-size:12px;font-weight:600;color:var(--danger);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">This Transaction vs. Normal</p>
+                <div class="comparison-row">
+                  <span>Amount</span>
+                  <span class="normal">₹1,500 usual</span>
+                  <span class="suspicious" id="td-amount-compare">₹75,000</span>
+                </div>
+                <div class="comparison-row">
+                  <span>Time</span>
+                  <span class="normal">8 AM–10 PM</span>
+                  <span class="suspicious" id="td-time-compare">02:31 AM</span>
+                </div>
+                <div class="comparison-row">
+                  <span>Beneficiary</span>
+                  <span class="normal">Known</span>
+                  <span class="suspicious">Unknown/New</span>
+                </div>
+                <div class="comparison-row">
+                  <span>Location</span>
+                  <span class="normal">Kakinada</span>
+                  <span class="suspicious" id="td-location-compare">VPN/Unknown</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="btn-group" style="flex-direction:column">
+            <button class="btn btn-danger w-full" onclick="app.openInvestigation(app.selectedTransaction?.id)">
+              Open Investigation
+            </button>
+            <button class="btn btn-ghost w-full" onclick="app.navigateTo('ledger')">Back to Ledger</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── FRAUD ALERTS ───────────────────────── -->
+    <section id="page-alerts" class="page-section">
+      <div class="page-header">
+        <h1>Fraud Alerts</h1>
+        <p>AI-detected suspicious transactions requiring your attention.</p>
+      </div>
+
+      <!-- Alert Stats -->
+      <div class="stat-grid mb-20">
+        <div class="stat-card danger">
+          <div class="stat-header"><div class="stat-label">Total Alerts</div><div class="stat-icon danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div></div>
+          <div class="stat-value" style="color:var(--danger)">5</div>
+          <div class="stat-sub">Across all accounts</div>
+        </div>
+        <div class="stat-card danger">
+          <div class="stat-header"><div class="stat-label">High Risk</div></div>
+          <div class="stat-value" style="color:var(--danger)">3</div>
+          <div class="stat-sub">Score ≥ 75</div>
+        </div>
+        <div class="stat-card warning">
+          <div class="stat-header"><div class="stat-label">Under Review</div></div>
+          <div class="stat-value" style="color:var(--warning)">2</div>
+          <div class="stat-sub">Awaiting analysis</div>
+        </div>
+        <div class="stat-card danger">
+          <div class="stat-header"><div class="stat-label">Confirmed Fraud</div></div>
+          <div class="stat-value" style="color:var(--danger)">1</div>
+          <div class="stat-sub">Blocked</div>
+        </div>
+        <div class="stat-card success">
+          <div class="stat-header"><div class="stat-label">False Positives</div></div>
+          <div class="stat-value" style="color:var(--success)">1</div>
+          <div class="stat-sub">Marked normal</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div><h3>Alert Feed</h3><p>Click any alert to investigate</p></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost btn-sm">Export</button>
+            <button class="btn btn-ghost btn-sm">Filter</button>
+          </div>
+        </div>
+        <div id="alerts-list">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── INVESTIGATION ──────────────────────── -->
+    <section id="page-investigation" class="page-section">
+      <div class="page-header" style="display:flex;align-items:center;gap:16px">
+        <button class="btn btn-ghost btn-sm" onclick="app.navigateTo('alerts')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><polyline points="15 18 9 12 15 6"/></svg>
+          Alerts
+        </button>
+        <div>
+          <h1>Fraud Investigation</h1>
+          <p>Security analyst view — transaction network & risk analysis</p>
+        </div>
+      </div>
+
+      <!-- Fraud Warning Banner -->
+      <div class="fraud-warning-banner mb-20">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div>
+          <h4>HIGH-RISK TRANSACTION UNDER INVESTIGATION</h4>
+          <p>This transaction has been flagged by the AI fraud engine. Review all evidence carefully before taking action. All actions are logged.</p>
+        </div>
+      </div>
+
+      <div class="grid-21">
+        <div>
+          <!-- 3D Network for investigation -->
+          <div class="panel mb-20">
+            <div class="panel-header">
+              <div><h3>Transaction Network (Filtered)</h3><p>Network centered around flagged account</p></div>
+            </div>
+            <div id="investigation-canvas-container"></div>
+            <div style="padding:12px 16px;background:var(--bg-elevated);font-size:12px;color:var(--text-secondary);display:flex;gap:20px">
+              <span><span style="color:var(--danger)">●</span> High-risk accounts</span>
+              <span><span style="color:var(--warning)">●</span> Suspicious connections</span>
+              <span><span style="color:var(--success)">●</span> Normal accounts</span>
+              <span style="color:var(--text-muted)">Click nodes to inspect</span>
+            </div>
+          </div>
+
+          <!-- Risk Factors -->
+          <div class="panel">
+            <div class="panel-header"><h3>Risk Factor Breakdown</h3></div>
+            <div class="panel-body">
+              <div class="risk-factors">
+                <div class="risk-factor-item">
+                  <div class="risk-factor-label"><span>Amount Anomaly</span><span style="color:var(--danger)">Critical</span></div>
+                  <div class="factor-bar"><div class="factor-fill" style="width:95%;background:var(--danger)"></div></div>
+                </div>
+                <div class="risk-factor-item">
+                  <div class="risk-factor-label"><span>Time Anomaly (2:31 AM)</span><span style="color:var(--danger)">High</span></div>
+                  <div class="factor-bar"><div class="factor-fill" style="width:82%;background:var(--danger)"></div></div>
+                </div>
+                <div class="risk-factor-item">
+                  <div class="risk-factor-label"><span>New Beneficiary</span><span style="color:var(--danger)">High</span></div>
+                  <div class="factor-bar"><div class="factor-fill" style="width:90%;background:var(--danger)"></div></div>
+                </div>
+                <div class="risk-factor-item">
+                  <div class="risk-factor-label"><span>Location / VPN</span><span style="color:var(--warning)">Medium</span></div>
+                  <div class="factor-bar"><div class="factor-fill" style="width:68%;background:var(--warning)"></div></div>
+                </div>
+                <div class="risk-factor-item">
+                  <div class="risk-factor-label"><span>Transaction Frequency</span><span style="color:var(--warning)">Medium</span></div>
+                  <div class="factor-bar"><div class="factor-fill" style="width:55%;background:var(--warning)"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Side panel -->
+        <div>
+          <!-- Transaction Info -->
+          <div class="panel mb-20">
+            <div class="panel-header"><h3>Transaction Details</h3></div>
+            <div class="panel-body">
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+                <div>
+                  <div style="font-size:26px;font-weight:800;color:var(--danger)" id="inv-amount">₹75,000</div>
+                  <div style="font-size:12px;color:var(--text-muted);font-family:var(--font-mono)" id="inv-txnid">TXN1003</div>
+                </div>
+                <div style="margin-left:auto;text-align:center">
+                  <svg width="80" height="80" viewBox="0 0 120 120">
+                    <circle cx="60" cy="60" r="45" fill="none" stroke="var(--bg-elevated)" stroke-width="8"/>
+                    <circle cx="60" cy="60" r="45" fill="none" id="inv-risk-ring-fill"
+                      stroke="#ef4444" stroke-width="8" stroke-linecap="round"
+                      stroke-dasharray="257 283" transform="rotate(-90 60 60)"/>
+                  </svg>
+                  <div style="margin-top:-58px;font-size:16px;font-weight:800" id="inv-score">91</div>
+                  <div style="font-size:9px;color:var(--text-muted)">/100 RISK</div>
+                  <div style="margin-top:54px;font-size:11px;font-weight:700;letter-spacing:0.5px" id="inv-level" style="color:var(--danger)">HIGH</div>
+                </div>
+              </div>
+
+              <div class="kv-grid" style="grid-template-columns:1fr 1fr">
+                <div class="kv-item"><div class="kv-label">Sender</div><div class="kv-value" id="inv-sender">Rahim</div></div>
+                <div class="kv-item"><div class="kv-label">Receiver</div><div class="kv-value" id="inv-receiver">Unknown Account</div></div>
+                <div class="kv-item"><div class="kv-label">Timestamp</div><div class="kv-value" id="inv-time">2026-09-23 02:31</div></div>
+                <div class="kv-item"><div class="kv-label">Status</div><div class="kv-value" id="inv-status" style="color:var(--warning)">Under Review</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Risk Reasons -->
+          <div class="panel mb-20">
+            <div class="panel-header"><h3>Fraud Indicators</h3></div>
+            <div class="panel-body">
+              <ul class="reasons-list" id="inv-reasons">
+                <li>Transaction amount 50× above user average</li>
+                <li>First-time transfer to this beneficiary</li>
+                <li>Transaction at 2:31 AM</li>
+                <li>VPN/Proxy IP detected</li>
+                <li>Device fingerprint mismatch</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Investigation Actions -->
+          <div class="panel">
+            <div class="panel-header"><h3>Analyst Actions</h3><p style="color:var(--danger);font-size:11px">Irreversible — confirm carefully</p></div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
+              <button class="btn btn-success w-full" onclick="app.markNormal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><polyline points="20 6 9 17 4 12"/></svg>
+                Mark as Normal
+              </button>
+              <button class="btn btn-danger w-full" onclick="app.confirmFraud()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+                Confirm Fraud
+              </button>
+              <button class="btn btn-warning w-full" onclick="app.blockTransaction()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                Block Transaction
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── ANALYTICS ──────────────────────────── -->
+    <section id="page-analytics" class="page-section">
+      <div class="page-header">
+        <h1>Analytics</h1>
+        <p>Financial intelligence and spending pattern analysis.</p>
+      </div>
+
+      <div class="grid-2 mb-20">
+        <div class="panel">
+          <div class="panel-header"><h3>Monthly Credits vs Debits</h3></div>
+          <div class="chart-container"><canvas id="chart-volume"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><h3>Transaction Volume Trend</h3></div>
+          <div class="chart-container"><canvas id="chart-trend"></canvas></div>
+        </div>
+      </div>
+
+      <div class="grid-2 mb-20">
+        <div class="panel">
+          <div class="panel-header"><h3>Spending by Category</h3></div>
+          <div class="chart-container"><canvas id="chart-category"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><h3>Risk Distribution</h3></div>
+          <div class="chart-container"><canvas id="chart-risk"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Monthly summary table -->
+      <div class="panel">
+        <div class="panel-header"><h3>Monthly Summary</h3></div>
+        <div style="overflow-x:auto">
+          <table class="data-table">
+            <thead>
+              <tr><th>Month</th><th>Volume</th><th>Credits</th><th>Debits</th><th>Normal Txns</th><th>Suspicious</th><th>Risk Rate</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>April</td><td>₹1,45,000</td><td style="color:var(--success)">₹42,000</td><td>₹18,000</td><td>142</td><td>3</td><td><span class="badge low">2.1%</span></td></tr>
+              <tr><td>May</td><td>₹1,62,000</td><td style="color:var(--success)">₹58,000</td><td>₹24,000</td><td>158</td><td>5</td><td><span class="badge low">3.2%</span></td></tr>
+              <tr><td>June</td><td>₹1,38,000</td><td style="color:var(--success)">₹35,000</td><td>₹19,000</td><td>136</td><td>2</td><td><span class="badge low">1.5%</span></td></tr>
+              <tr><td>July</td><td>₹1,95,000</td><td style="color:var(--success)">₹72,000</td><td>₹31,000</td><td>187</td><td>8</td><td><span class="badge medium">4.3%</span></td></tr>
+              <tr><td>August</td><td>₹1,72,000</td><td style="color:var(--success)">₹48,000</td><td>₹22,000</td><td>166</td><td>6</td><td><span class="badge low">3.6%</span></td></tr>
+              <tr><td>September</td><td>₹1,88,000</td><td style="color:var(--success)">₹42,000</td><td>₹18,570</td><td>182</td><td>3</td><td><span class="badge low">1.6%</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── ADMIN DASHBOARD ────────────────────── -->
+    <section id="page-admin" class="page-section">
+      <div class="page-header">
+        <h1>Admin Security Dashboard</h1>
+        <p>Platform-wide monitoring for all customers and transactions.</p>
+      </div>
+
+      <!-- Admin Stats -->
+      <div class="stat-grid mb-20">
+        <div class="stat-card accent">
+          <div class="stat-header"><div class="stat-label">Total Customers</div></div>
+          <div class="stat-value">12,450</div>
+          <div class="stat-sub">Active accounts</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header"><div class="stat-label">Total Transactions</div></div>
+          <div class="stat-value">28,921</div>
+          <div class="stat-sub">All time</div>
+        </div>
+        <div class="stat-card warning">
+          <div class="stat-header"><div class="stat-label">Suspicious</div></div>
+          <div class="stat-value" style="color:var(--warning)">147</div>
+          <div class="stat-sub">Flagged for review</div>
+        </div>
+        <div class="stat-card danger">
+          <div class="stat-header"><div class="stat-label">High Risk</div></div>
+          <div class="stat-value" style="color:var(--danger)">32</div>
+          <div class="stat-sub">Score ≥ 75</div>
+        </div>
+        <div class="stat-card danger">
+          <div class="stat-header"><div class="stat-label">Confirmed Fraud</div></div>
+          <div class="stat-value" style="color:var(--danger)">8</div>
+          <div class="stat-sub">This month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header"><div class="stat-label">Blocked Accounts</div></div>
+          <div class="stat-value">15</div>
+          <div class="stat-sub">Under block</div>
+        </div>
+      </div>
+
+      <div class="grid-21">
+        <!-- Live Feed -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h3>Live Transaction Monitor</h3>
+              <p>Real-time transaction feed — updates every 4 seconds</p>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--success)">
+              <div class="status-dot" style="width:6px;height:6px;border-radius:50%;background:var(--success);animation:pulse 2s infinite"></div>
+              LIVE
+            </div>
+          </div>
+          <div id="live-feed-list" class="live-feed"></div>
+        </div>
+
+        <!-- Risk Alerts quick panel -->
+        <div>
+          <div class="panel mb-20">
+            <div class="panel-header"><h3>Active Threats</h3></div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
+              <div style="padding:12px;background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:var(--radius-md)">
+                <div style="font-size:12px;font-weight:700;color:var(--danger);margin-bottom:4px">HIGH PRIORITY</div>
+                <div style="font-size:13px">TXN1003 — ₹75,000 to Unknown Account</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Score: 91/100 · 02:31 AM</div>
+                <button class="btn btn-danger btn-sm" style="margin-top:8px" onclick="app.openAlert('ALT001')">Investigate</button>
+              </div>
+              <div style="padding:12px;background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:var(--radius-md)">
+                <div style="font-size:12px;font-weight:700;color:var(--danger);margin-bottom:4px">HIGH PRIORITY</div>
+                <div style="font-size:13px">TXN1012 — ₹1,25,000 between fraud accounts</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Score: 97/100 · Blocked</div>
+                <button class="btn btn-danger btn-sm" style="margin-top:8px" onclick="app.openAlert('ALT003')">Investigate</button>
+              </div>
+              <div style="padding:12px;background:var(--warning-bg);border:1px solid var(--warning-border);border-radius:var(--radius-md)">
+                <div style="font-size:12px;font-weight:700;color:var(--warning);margin-bottom:4px">MEDIUM PRIORITY</div>
+                <div style="font-size:13px">TXN1015 — ₹18,000 at 3 AM</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Score: 79/100 · Under Review</div>
+                <button class="btn btn-warning btn-sm" style="margin-top:8px" onclick="app.openAlert('ALT004')">Investigate</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header"><h3>System Health</h3></div>
+            <div class="panel-body">
+              <div class="behavior-metric"><span class="behavior-label">AI Engine</span><span class="behavior-value" style="color:var(--success)">● Operational</span></div>
+              <div class="behavior-metric"><span class="behavior-label">Fraud Model v2.4</span><span class="behavior-value" style="color:var(--success)">● Running</span></div>
+              <div class="behavior-metric"><span class="behavior-label">Transaction Monitor</span><span class="behavior-value" style="color:var(--success)">● Active</span></div>
+              <div class="behavior-metric"><span class="behavior-label">Behavioral Engine</span><span class="behavior-value" style="color:var(--success)">● Active</span></div>
+              <div class="behavior-metric"><span class="behavior-label">Network Analyzer</span><span class="behavior-value" style="color:var(--success)">● Active</span></div>
+              <div class="behavior-metric"><span class="behavior-label">Alert Queue</span><span class="behavior-value" style="color:var(--warning)">5 Pending</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SETTINGS ───────────────────────────── -->
+    <section id="page-settings" class="page-section">
+      <div class="page-header"><h1>Profile &amp; Settings</h1><p>Manage your account and preferences.</p></div>
+
+      <!-- Profile Header -->
+      <div class="profile-header mb-20">
+        <div class="profile-avatar">R</div>
+        <div class="profile-info">
+          <h2>Rahim</h2>
+          <p>rahim@securledger.dev · +91 98765 43210</p>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:2px">Account: SLAC000001 · IFSC: SLB0001234</p>
+          <div class="profile-badges">
+            <span class="badge low">KYC Verified</span>
+            <span class="badge info">Low Risk Profile</span>
+            <span class="badge neutral">Credit Score: 742</span>
+          </div>
+        </div>
+        <button class="btn btn-ghost" style="margin-left:auto;align-self:flex-start">Edit Profile</button>
+      </div>
+
+      <!-- Security Settings -->
+      <div class="settings-section mb-16">
+        <div class="settings-section-header">Security</div>
+        <div class="settings-item">
+          <div class="settings-item-info"><h4>Two-Factor Authentication</h4><p>Require OTP for every login and transaction</p></div>
+          <div class="toggle on"></div>
+        </div>
+        <div class="settings-item">
+          <div class="settings-item-info"><h4>Transaction Alerts (SMS)</h4><p>Get SMS for all transactions above ₹500</p></div>
+          <div class="toggle on"></div>
+        </div>
+        <div class="settings-item">
+          <div class="settings-item-info"><h4>Fraud Alert Notifications</h4><p>Immediate notification on suspicious activity</p></div>
+          <div class="toggle on"></div>
+        </div>
+        <div class="settings-item">
+          <div class="settings-item-info"><h4>Unknown Device Block</h4><p>Block transactions from unrecognized devices</p></div>
+          <div class="toggle"></div>
+        </div>
+        <div class="settings-item">
+          <div class="settings-item-info"><h4>High-Risk Beneficiary Block</h4><p>Auto-block transfers to high-risk accounts</p></div>
+          <div class="toggle on"></div>
+        </div>
+      </div>
+
+      <!-- Notification Preferences -->
+      <div class="settings-section mb-16">
+        <div class="settings-section-header">Notification Preferences</div>
+        <div class="settings-item">
+          <div class="settings-item-info"><h4>Email Notifications</h4><p>Monthly statements and security alerts</p></div>
+          <div class="toggle on"></div>
+        </div>
+        <div class="settings-item">
+          <div class="settings-item-info"><h4>Push Notifications</h4><p>Real-time app notifications</p></div>
+          <div class="toggle on"></div>
+        </div>
+        <div class="settings-item">
+          <div class="settings-item-info"><h4>Marketing Emails</h4><p>Product updates and offers</p></div>
+          <div class="toggle"></div>
+        </div>
+      </div>
+
+      <!-- Account Info -->
+      <div class="settings-section mb-16">
+        <div class="settings-section-header">Account Information</div>
+        <div class="settings-item">
+          <div class="settings-item-info"><h4>Account Number</h4><p>SLAC000001</p></div>
+          <button class="btn btn-ghost btn-sm">Copy</button>
+        </div>
+        <div class="settings-item">
+          <div class="settings-item-info"><h4>IFSC Code</h4><p>SLB0001234</p></div>
+          <button class="btn btn-ghost btn-sm">Copy</button>
+        </div>
+        <div class="settings-item">
+          <div class="settings-item-info"><h4>KYC Status</h4><p>Verified on 15 Jan 2024</p></div>
+          <span class="badge low">Verified</span>
+        </div>
+        <div class="settings-item">
+          <div class="settings-item-info"><h4>Credit Score</h4><p>TransUnion CIBIL Score</p></div>
+          <span style="font-size:18px;font-weight:700;color:var(--success)">742</span>
+        </div>
+      </div>
+
+      <!-- Theme -->
+      <div class="settings-section mb-16">
+        <div class="settings-section-header">Appearance</div>
+        <div class="settings-item">
+          <div class="settings-item-info"><h4>Theme Mode</h4><p>Toggle interface color scheme (Dark / Light)</p></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-accent btn-sm" id="theme-btn-dark" onclick="app.setTheme('dark')">Dark</button>
+            <button class="btn btn-ghost btn-sm" id="theme-btn-light" onclick="app.setTheme('light')">Light</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:20px 0;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:12px;color:var(--text-muted)">SecureLedger v2.4.1 · College Prototype · Fictional Data Only</div>
+        <button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="document.getElementById('app-shell').classList.remove('active');document.getElementById('login-page').style.display='flex'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign Out
+        </button>
+      </div>
+    </section>
+
+  </main><!-- END MAIN CONTENT -->
+
+</div><!-- END APP SHELL -->
+
+
+<!-- ══════════════════════════════════════════
+     AI FRAUD SCREENING OVERLAY
+══════════════════════════════════════════ -->
+<div id="screening-overlay" class="screening-overlay">
+  <div class="screening-card">
+    <div class="screening-icon" id="screening-icon">
+      <svg id="screening-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    </div>
+
+    <div class="screening-title" id="screening-title">Transaction Security Check</div>
+    <div class="screening-sub" id="screening-sub">Analyzing transaction pattern with AI...</div>
+
+    <!-- Progress Phase -->
+    <div id="screening-progress">
+      <div class="check-list">
+        <div class="check-item" id="amount-check">
+          <svg class="pending-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <svg class="check-icon" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Amount analysis
+        </div>
+        <div class="check-item" id="history-check">
+          <svg class="pending-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Transaction history
+        </div>
+        <div class="check-item" id="time-check">
+          <svg class="pending-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Time pattern analysis
+        </div>
+        <div class="check-item" id="beneficiary-check">
+          <svg class="pending-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Beneficiary analysis
+        </div>
+        <div class="check-item" id="location-check">
+          <svg class="pending-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Location analysis
+        </div>
+        <div class="check-item" id="behavior-check">
+          <svg class="pending-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Behavioral pattern
+        </div>
+      </div>
+
+      <div style="margin-top:16px;padding:12px;background:var(--accent-glow);border:1px solid rgba(59,114,255,0.2);border-radius:var(--radius-md);font-size:12px;color:var(--text-secondary);text-align:center">
+        🤖 SecureLedger AI is analyzing this transaction...
+      </div>
+    </div>
+
+    <!-- Result Phase -->
+    <div id="screening-result" style="display:none">
+      <div style="margin-bottom:16px">
+        <div style="font-size:32px;font-weight:800;text-align:center;letter-spacing:-1px" id="result-score">18/100</div>
+        <div style="font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-align:center;margin-bottom:12px" id="result-level">LOW RISK</div>
+        <div class="risk-meter"><div class="risk-meter-fill low" id="result-meter-fill" style="width:18%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:4px">
+          <span>0 — Safe</span><span>50 — Review</span><span>100 — Fraud</span>
+        </div>
+      </div>
+      <button class="btn btn-success btn-lg w-full" id="screening-continue-btn">Continue</button>
+      <button class="btn btn-ghost w-full" style="margin-top:8px" id="screening-cancel-btn">Cancel Transaction</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- END #app -->
+
+<!-- Data & Scripts -->
+<script src="data.js"></script>
+<script src="app.js"></script>
+
+<script>
+// Inline: update check items when they become .done
+(function() {
+  const observer = new MutationObserver(mutations => {
+    mutations.forEach(m => {
+      if (m.type === 'attributes' && m.attributeName === 'class') {
+        const el = m.target;
+        if (el.classList.contains('done')) {
+          const pending = el.querySelector('.pending-icon');
+          const check   = el.querySelector('.check-icon');
+          if (pending) pending.style.display = 'none';
+          if (check)   check.style.display   = 'inline';
+        }
+      }
+    });
+  });
+
+  document.querySelectorAll('.check-item').forEach(el => {
+    observer.observe(el, { attributes: true });
+  });
+})();
+</script>
+
+</body>
+</html>
